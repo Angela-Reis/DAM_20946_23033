@@ -1,10 +1,12 @@
 package pt.ipt.dam2022.projetodam.ui.activity
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -103,6 +105,14 @@ class MainActivity : AppCompatActivity() {
             2, StaggeredGridLayoutManager.VERTICAL
         )
         recyclerView.layoutManager = layoutManager
+    }
+
+    /**
+     * função genérica para mudar de view
+     */
+    fun changeActivity(view: View){
+        val intent = Intent(this, TestActivity::class.java)
+        startActivity(intent)
     }
 }
 
