@@ -15,15 +15,25 @@ import pt.ipt.dam2022.projetodam.R
 import pt.ipt.dam2022.projetodam.model.Product
 import pt.ipt.dam2022.projetodam.retrofit.RetrofitInitializer
 import pt.ipt.dam2022.projetodam.ui.adapter.ProductsListAdapter
+import pt.ipt.dam2022.projetodam.ui.fragments.HeaderFragment
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
 
+    lateinit var header:HeaderFragment
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        header = HeaderFragment()
+
+        val fragmentTransaction = supportFragmentManager.beginTransaction()
+        fragmentTransaction.add(R.id.headerFragment,header)
+        fragmentTransaction.addToBackStack(null)
+        fragmentTransaction.commit()
 
         //Request that have not been granted at this point
         requestPermissionsIfNecessary(
@@ -44,7 +54,7 @@ class MainActivity : AppCompatActivity() {
      * function to collect user permission
      */
     private fun requestPermissionsIfNecessary(permissions: Array<out String>) {
-        val permissionsToRequest = ArrayList<String>();
+        val permissionsToRequest = ArrayList<String>()
         permissions.forEach { permission ->
             if (ContextCompat.checkSelfPermission(
                     this,
@@ -52,7 +62,7 @@ class MainActivity : AppCompatActivity() {
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
                 // Permission is not granted
-                permissionsToRequest.add(permission);
+                permissionsToRequest.add(permission)
             }
         }
         if (permissionsToRequest.size > 0) {
@@ -60,11 +70,11 @@ class MainActivity : AppCompatActivity() {
                 this,
                 permissionsToRequest.toArray(arrayOf<String>()),
                 1
-            );
+            )
         }
     }
 
-    /*
+    /**
      * access api with the call specified in listAllProducts
      */
     private fun listProducts() {
@@ -80,7 +90,7 @@ class MainActivity : AppCompatActivity() {
         // use data read
         call.enqueue(object : Callback<Map<String, Product>> {
             override fun onResponse(
-                call: Call<Map<String, Product>>?, response: Response<Map<String, Product>>??
+                call: Call<Map<String, Product>>?, response: Response<Map<String, Product>>?
             ) {
                 response?.body()?.let {
                     val products: Map<String, Product> = it

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ProjetoDAM</string>
+    <string name="menu">Menu</string>
+    <string name="filter">Filter</string>
 </resources>
