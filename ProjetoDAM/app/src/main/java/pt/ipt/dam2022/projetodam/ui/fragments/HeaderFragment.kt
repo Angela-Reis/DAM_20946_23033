@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
-import android.widget.TextView
+import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import pt.ipt.dam2022.projetodam.R
 
@@ -30,16 +30,16 @@ class HeaderFragment : Fragment(){
     ): View? {
         var view:View = inflater.inflate(R.layout.header_fragment_layout, container, false)
 
+        var toolBar:androidx.appcompat.widget.Toolbar = view.findViewById(R.id.toolBar)
+        // CREATE LISTENER HERE
+
         var btnMenu:ImageButton = view.findViewById(R.id.btnMenu)
         // CREATE LISTENER HERE
 
-        var txt:TextView = view.findViewById(R.id.searchBar)
+        var txt:SearchView = view.findViewById(R.id.search_bar)
         // CREATE LISTENER HERE
 
-        var btnSearch: ImageButton = view.findViewById(R.id.searchBtn)
-        // CREATE LISTENER HERE
-
-        var btnFilter:Button = view.findViewById(R.id.btnFilter)
+        var btnFilter: Button = view.findViewById(R.id.btnFilter)
         // CREATE LISTENER HERE
 
         return view
