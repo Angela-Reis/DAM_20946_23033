@@ -26,7 +26,6 @@ class MainActivity : AppCompatActivity() {
         //Request that have not been granted at this point
         requestPermissionsIfNecessary(
             arrayOf(
-
                 Manifest.permission.INTERNET,
                 Manifest.permission.ACCESS_NETWORK_STATE
             )
@@ -34,9 +33,8 @@ class MainActivity : AppCompatActivity() {
 
 
         listProducts()
+
     }
-
-
 
     /*
      * function to collect user permission

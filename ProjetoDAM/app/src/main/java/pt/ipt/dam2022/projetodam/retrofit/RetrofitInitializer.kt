@@ -20,5 +20,5 @@ class RetrofitInitializer {
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
 
-    fun productService() = retrofit.create(ProductService::class.java)
+    fun productService(): ProductService = retrofit.create(ProductService::class.java)
 }

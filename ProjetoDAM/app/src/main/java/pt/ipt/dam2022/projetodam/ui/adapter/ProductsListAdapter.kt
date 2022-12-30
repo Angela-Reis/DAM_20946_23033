@@ -1,13 +1,17 @@
 package pt.ipt.dam2022.projetodam.ui.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import pt.ipt.dam2022.projetodam.R
 import pt.ipt.dam2022.projetodam.model.Product
+import pt.ipt.dam2022.projetodam.ui.activity.ProductActivity
+
 
 class ProductsListAdapter(
     private val products: Map<String, Product>,
@@ -24,6 +28,7 @@ class ProductsListAdapter(
             category.text = product.category
             name.text = product.name
             price.text = product.price.toString()
+
         }
 
     }
@@ -31,8 +36,16 @@ class ProductsListAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val p = products[keys[position]]
+        val itemKey = keys[position]
+
         holder?.let {
             if (p != null) {
+                holder.itemView.setOnClickListener {
+                    Toast.makeText(context,"clicked " + keys[position],Toast.LENGTH_LONG).show()
+                    val intent = Intent(context, ProductActivity::class.java)
+                    intent.putExtra("Product", p)
+                    context.startActivity(intent)
+                }
                 it.bindView(p)
             }
         }
