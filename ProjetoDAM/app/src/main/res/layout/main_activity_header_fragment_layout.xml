@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:visibility="visible"
-    tools:context=".ui.activity.MainActivity">
+    android:visibility="visible">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolBar"
@@ -15,26 +14,27 @@
 
         <ImageButton
             android:id="@+id/btnMenu"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_marginEnd="10dp"
-            android:src="@android:drawable/ic_menu_sort_by_size"
-            android:background="@color/black"/>
+            android:background="@color/black"
+            android:contentDescription="@string/app_name"
+            android:src="@android:drawable/ic_menu_sort_by_size" />
 
         <SearchView
             android:id="@+id/search_bar"
-            android:layout_width="260dp"
+            android:layout_width="245dp"
             android:layout_height="match_parent"
             android:layout_marginEnd="10dp"
             android:background="@color/white"/>
 
         <Button
             android:id="@+id/btnFilter"
-            android:layout_width="70dp"
-            android:layout_height="40dp"
+            android:layout_width="75dp"
+            android:layout_height="48dp"
             android:background="@color/black"
-            android:textSize="10dp"
-            android:text="@string/filter"/>
+            android:text="@string/filter"
+            android:textSize="11sp" />
 
     </androidx.appcompat.widget.Toolbar>
 

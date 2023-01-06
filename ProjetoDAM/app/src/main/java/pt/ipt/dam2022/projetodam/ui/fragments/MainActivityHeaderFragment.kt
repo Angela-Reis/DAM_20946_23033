@@ -12,7 +12,7 @@ import pt.ipt.dam2022.projetodam.R
 
 private const val SEARCH_GENERIC_TEXT_PT = "Pesquisar"
 
-class HeaderFragment : Fragment(){
+class MainActivityHeaderFragment : Fragment(){
 
     private var searchGenericText: String? = null
 
@@ -28,7 +28,7 @@ class HeaderFragment : Fragment(){
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        var view:View = inflater.inflate(R.layout.header_fragment_layout, container, false)
+        var view:View = inflater.inflate(R.layout.main_activity_header_fragment_layout, container, false)
 
         var toolBar:androidx.appcompat.widget.Toolbar = view.findViewById(R.id.toolBar)
         // CREATE LISTENER HERE
