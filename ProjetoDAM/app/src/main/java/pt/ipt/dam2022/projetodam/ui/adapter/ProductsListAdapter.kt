@@ -20,7 +20,7 @@ class ProductsListAdapter(
     private val keys: List<String> = products.keys.toList()
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bindView(product: Product) {
+        fun bindView(product: Product, productKey: String) {
             val category: TextView = itemView.findViewById(R.id.product_category)
             val name: TextView = itemView.findViewById(R.id.product_name)
             val price: TextView = itemView.findViewById(R.id.product_price)
@@ -28,25 +28,23 @@ class ProductsListAdapter(
             category.text = product.category
             name.text = product.name
             price.text = product.price.toString()
-
+            itemView.setOnClickListener {
+                val intent = Intent(itemView.context, ProductActivity::class.java)
+                intent.putExtra("Product", product)
+                intent.putExtra("ProductKey", productKey)
+                itemView.context.startActivity(intent)
+            }
         }
 
     }
 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val p = products[keys[position]]
-        val itemKey = keys[position]
-
-        holder?.let {
+        val productKey = keys[position]
+        val p = products[productKey]
+        holder.let {
             if (p != null) {
-                holder.itemView.setOnClickListener {
-                    Toast.makeText(context,"clicked " + keys[position],Toast.LENGTH_LONG).show()
-                    val intent = Intent(context, ProductActivity::class.java)
-                    intent.putExtra("Product", p)
-                    context.startActivity(intent)
-                }
-                it.bindView(p)
+                it.bindView(p, productKey)
             }
         }
     }

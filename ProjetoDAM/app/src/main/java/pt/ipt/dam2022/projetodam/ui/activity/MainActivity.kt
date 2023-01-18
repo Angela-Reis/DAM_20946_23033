@@ -86,7 +86,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<Map<String, Product>>, t: Throwable) {
-                t?.message?.let { Log.e("I can not read data...", it) }
+                t.message?.let { Log.e("Can't read data ", it) }
             }
         })
     }
