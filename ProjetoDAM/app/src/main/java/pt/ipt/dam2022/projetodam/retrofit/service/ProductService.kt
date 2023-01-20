@@ -17,6 +17,7 @@ interface ProductService {
     @GET("/products.json")
     fun listAllProducts(): Call<Map<String, Product>>
 
+
     /*
      * get a specific Store Information
      */
@@ -30,7 +31,6 @@ interface ProductService {
     fun getProductPriceFromStore(
         @Path("store") storeKey: String, @Path("product") productKey: String
     ): Call<StorePrice>
-
 
 }
 
