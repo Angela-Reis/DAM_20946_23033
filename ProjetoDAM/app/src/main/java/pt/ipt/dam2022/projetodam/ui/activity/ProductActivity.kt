@@ -4,13 +4,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import pt.ipt.dam2022.projetodam.R
 import pt.ipt.dam2022.projetodam.model.Product
 import pt.ipt.dam2022.projetodam.model.StorePrice
-import pt.ipt.dam2022.projetodam.retrofit.RetrofitInitializer
+import pt.ipt.dam2022.projetodam.retrofit.RetrofitProductsInit
+import pt.ipt.dam2022.projetodam.ui.activity.login.LoginActivity
 import pt.ipt.dam2022.projetodam.ui.adapter.ProductPricesAdapter
 import retrofit2.Call
 import retrofit2.Callback
@@ -21,22 +23,20 @@ class ProductActivity : AppCompatActivity() {
     private lateinit var productKey: String
     private lateinit var product: Product
     private var storePrices = ArrayList<StorePrice>()
-
+    lateinit var idToken: String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val sharedPreference = getSharedPreferences("USER", MODE_PRIVATE)
         setContentView(R.layout.activity_product)
         product = (intent.getSerializableExtra("Product") as Product?)!!
         productKey = intent.getStringExtra("ProductKey").toString()
-
-        val category: TextView = findViewById(R.id.product_category)
-        val name: TextView = findViewById(R.id.product_name)
-        val price: TextView = findViewById(R.id.product_price)
+        idToken = sharedPreference.getString("idTokenUser", null).toString()
+        if (idToken == null.toString()) {
+            val intent = Intent(this, LoginActivity::class.java)
+            this.startActivity(intent)
+        }
 
         if (product != null) {
-            category.text = product.category
-            name.text = product.name
-            price.text = product.price.toString()
-
             product.stores?.forEach { entry ->
                 /*Toast.makeText(
                     this,
@@ -49,12 +49,20 @@ class ProductActivity : AppCompatActivity() {
                 // getStorePrice(entry.key, productKey)
             }
             /*showListStores();*/
+            val category: TextView = findViewById(R.id.product_category)
+            val name: TextView = findViewById(R.id.product_name)
+            val price: TextView = findViewById(R.id.product_price)
+            category.text = product.category
+            name.text = product.name
+            price.text = product.price.toString()
 
         } else {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
         }
+
+
     }
 
 
@@ -63,20 +71,30 @@ class ProductActivity : AppCompatActivity() {
      * then pass that information to get the Product Price in that store
      * */
     private fun getStoreName(storeKey: String) {
-        val call = RetrofitInitializer().productService().getStoreName(storeKey)
+        val call = RetrofitProductsInit().productService().getStoreName(storeKey, idToken)
         call.enqueue(object : Callback<String> {
 
             override fun onResponse(call: Call<String>, response: Response<String>) {
-                response.body()?.let {
-                    val name: String = it
-                    // Get the Price of the Product in the Store
-                    // and associate it with the store name that was fetched
-                    val callPrice = RetrofitInitializer().productService()
-                        .getProductPriceFromStore(storeKey, productKey)
-                    processProductPrice(callPrice, name, storeKey)
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        val name: String = it
+                        // Get the Price of the Product in the Store
+                        // and associate it with the store name that was fetched
+                        val callPrice = RetrofitProductsInit().productService()
+                            .getProductPriceFromStore(storeKey, productKey, idToken)
+                        processProductPrice(callPrice, name, storeKey)
 
+                    }
+                } else {
+                    Toast.makeText(
+                        applicationContext,
+                        "Ocorreu um erro",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
+
+
 
             override fun onFailure(call: Call<String>, t: Throwable) {
                 t.message?.let { Log.e("Can't read data ", it) }
@@ -92,12 +110,20 @@ class ProductActivity : AppCompatActivity() {
         // use data read
         call.enqueue(object : Callback<StorePrice> {
             override fun onResponse(call: Call<StorePrice>, response: Response<StorePrice>) {
-                response.body()?.let {
-                    val result: StorePrice = it
-                    result.storeName = name
-                    result.storeKey = storeKey
-                    storePrices.add(result)
-                    configureListPrice()
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        val result: StorePrice = it
+                        result.storeName = name
+                        result.storeKey = storeKey
+                        storePrices.add(result)
+                        configureListPrice()
+                    }
+                } else {
+                    Toast.makeText(
+                        applicationContext,
+                        "Ocorreu um erro",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
 

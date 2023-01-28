@@ -1,0 +1,91 @@
+package pt.ipt.dam2022.projetodam.ui.activity.login
+
+import android.content.Intent
+import android.os.Bundle
+import android.util.Log
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import org.json.JSONObject
+import pt.ipt.dam2022.projetodam.R
+import pt.ipt.dam2022.projetodam.model.auth.SignUpResponse
+import pt.ipt.dam2022.projetodam.retrofit.RetrofitAuthInit
+import pt.ipt.dam2022.projetodam.ui.activity.MainActivity
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
+
+class SignUpActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_signup)
+
+
+        // get reference to button
+        val btnRegister = findViewById<Button>(R.id.buttonSignUp)
+        val email = findViewById<EditText>(R.id.txtEmail)
+        val password = findViewById<EditText>(R.id.txtPassword)
+
+        // set on-click listener
+        btnRegister.setOnClickListener {
+            signUpUser("teste999@ipt.pt", "teste1234!")
+        }
+    }
+
+    /**
+     * access api with the call specified in signUpUser
+     */
+    private fun signUpUser(email: String, password: String) {
+        val call = RetrofitAuthInit().authService().signupNewUser(email, password, true)
+        processSignUp(call)
+    }
+
+
+    /**
+     * add the User to sharedPreference to keep token when the app is shut down
+     */
+    private fun processSignUp(call: Call<SignUpResponse>) {
+        // use data read
+        call.enqueue(object : Callback<SignUpResponse> {
+            override fun onResponse(
+                call: Call<SignUpResponse>,
+                response: Response<SignUpResponse>
+            ) {
+
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        val response: SignUpResponse = it
+                        // takes the data read from API and saves it
+                        val sharedPreference =  getSharedPreferences("USER", MODE_PRIVATE)
+                        val editor = sharedPreference.edit()
+                        editor.putString("emailUser",response.email)
+                        editor.putString("refreshTokenUser",response.refreshToken)
+                        editor.putString("idTokenUser",response.id_token)
+                        editor.apply()
+                        val intent = Intent(applicationContext, MainActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    }
+                } else {
+                    try {
+                        val jObjError = JSONObject(response.errorBody()!!.string())
+                        Toast.makeText(
+                            applicationContext,
+                            jObjError.getJSONObject("error").getString("message"),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    } catch (e: Exception) {
+                        Toast.makeText(applicationContext, e.message, Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<SignUpResponse>, t: Throwable) {
+                t.message?.let { Log.e("Something went wrong ", it) }
+                Toast.makeText(applicationContext,"Aconteceu um erro", Toast.LENGTH_LONG).show()
+            }
+        })
+    }
+}

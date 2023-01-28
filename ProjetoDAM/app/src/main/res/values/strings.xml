@@ -7,4 +7,9 @@
     <string name="testlist2">testlist2</string>
     <string name="testlist3">testlist3</string>
     <string name="sobre_nos">Sobre Nós</string>
+    <string name="email">Email</string>
+    <string name="entrar">Entrar</string>
+    <string name="password">Password</string>
+    <string name="criar_conta">Criar Conta</string>
+    <string name="sair">Sair</string>
 </resources>
