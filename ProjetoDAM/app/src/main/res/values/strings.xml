@@ -12,4 +12,5 @@
     <string name="password">Password</string>
     <string name="criar_conta">Criar Conta</string>
     <string name="sair">Sair</string>
+    <string name="repetir_password">Repetir password</string>
 </resources>

@@ -32,6 +32,18 @@
         android:minHeight="50dp"
         android:textColorHint="#757575" />
 
+    <EditText
+        android:id="@+id/txtRepeatPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="25dp"
+        android:ems="10"
+        android:hint="@string/repetir_password"
+        android:importantForAutofill="no"
+        android:inputType="textPassword"
+        android:minHeight="50dp"
+        android:textColorHint="#757575" />
+
     <Button
         android:id="@+id/buttonSignUp"
         android:ems="10"

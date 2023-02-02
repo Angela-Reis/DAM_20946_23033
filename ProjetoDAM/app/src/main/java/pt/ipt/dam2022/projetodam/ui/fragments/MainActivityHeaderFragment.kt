@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.SearchView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import pt.ipt.dam2022.projetodam.R
 
@@ -41,6 +42,8 @@ class MainActivityHeaderFragment : Fragment(){
 
         var btnFilter: Button = view.findViewById(R.id.btnFilter)
         // CREATE LISTENER HERE
+        btnFilter.setOnClickListener{
+        }
 
         return view
     }

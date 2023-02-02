@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
+import androidx.core.util.PatternsCompat
 import org.json.JSONObject
 import pt.ipt.dam2022.projetodam.R
 import pt.ipt.dam2022.projetodam.model.auth.LoginUserResponse
@@ -31,11 +33,26 @@ class LoginActivity : AppCompatActivity() {
 
         // get reference to button
         val btnLogin = findViewById<Button>(R.id.buttonLogin)
+        val emailTxt = findViewById<EditText>(R.id.loginEmail)
+        val passwordTxt = findViewById<EditText>(R.id.loginPassword)
 
         // set on-click listener
         btnLogin.setOnClickListener {
-            loginUser("teste999@ipt.pt", "teste1234!")
+            val email = emailTxt.text.toString()
+            val pass = passwordTxt.text.toString()
+             if(!checkForEmail(email)){
+                emailTxt.error = "Coloque um email válido"
+            }else{
+                loginUser(email, pass)
+            }
         }
+    }
+
+    private fun checkForEmail(email: String): Boolean {
+        if (PatternsCompat.EMAIL_ADDRESS.matcher(email).matches()) {
+            return true
+        }
+        return false
     }
 
     /**

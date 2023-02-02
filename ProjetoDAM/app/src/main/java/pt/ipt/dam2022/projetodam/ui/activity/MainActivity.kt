@@ -28,15 +28,15 @@ import retrofit2.Response
 class MainActivity : AppCompatActivity() {
     lateinit var header: MainActivityHeaderFragment
     lateinit var idToken: String
-    lateinit var refreshToken: String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         val sharedPreference = getSharedPreferences("USER", MODE_PRIVATE)
         idToken = sharedPreference.getString("idTokenUser", null).toString()
+
         if (idToken == null.toString()) {
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP;
             val intent = Intent(this, LoginActivity::class.java)
             this.startActivity(intent)
             finish()
@@ -117,7 +117,7 @@ class MainActivity : AppCompatActivity() {
      * access api with the call specified in listAllProducts
      */
     private fun listProducts() {
-        val call = RetrofitProductsInit().productService().listAllProducts(idToken)
+        val call = RetrofitProductsInit(applicationContext).productService().listAllProducts(idToken)
         processListProducts(call)
     }
 
@@ -132,7 +132,7 @@ class MainActivity : AppCompatActivity() {
                 call: Call<Map<String, Product>>, response: Response<Map<String, Product>>
             ) {
                 if (response.isSuccessful) {
-                    response?.body()?.let {
+                    response.body()?.let {
                         val products: Map<String, Product> = it
                         // takes the data read from API and shows it the interface
                         configureListProduct(products)

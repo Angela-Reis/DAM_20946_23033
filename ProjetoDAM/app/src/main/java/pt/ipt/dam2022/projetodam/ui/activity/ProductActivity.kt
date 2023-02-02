@@ -28,6 +28,12 @@ class ProductActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val sharedPreference = getSharedPreferences("USER", MODE_PRIVATE)
         setContentView(R.layout.activity_product)
+        if (intent.getSerializableExtra("Product") == null) {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+            return
+        }
         product = (intent.getSerializableExtra("Product") as Product?)!!
         productKey = intent.getStringExtra("ProductKey").toString()
         idToken = sharedPreference.getString("idTokenUser", null).toString()
@@ -36,32 +42,24 @@ class ProductActivity : AppCompatActivity() {
             this.startActivity(intent)
         }
 
-        if (product != null) {
-            product.stores?.forEach { entry ->
-                /*Toast.makeText(
-                    this,
-                    "PRODUCT KEY =  $productKey STORE KEY= ${entry.key}",
-                    Toast.LENGTH_LONG
-                ).show()*/
-                getStoreName(entry.key)
+        product.stores?.forEach { entry ->
+            /*Toast.makeText(
+                this,
+                "PRODUCT KEY =  $productKey STORE KEY= ${entry.key}",
+                Toast.LENGTH_LONG
+            ).show()*/
+            getStoreName(entry.key)
 
-                // var allStorePrices: Map<String keyStore, >
-                // getStorePrice(entry.key, productKey)
-            }
-            /*showListStores();*/
-            val category: TextView = findViewById(R.id.product_category)
-            val name: TextView = findViewById(R.id.product_name)
-            val price: TextView = findViewById(R.id.product_price)
-            category.text = product.category
-            name.text = product.name
-            price.text = product.price.toString()
-
-        } else {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
+            // var allStorePrices: Map<String keyStore, >
+            // getStorePrice(entry.key, productKey)
         }
-
+        /*showListStores();*/
+        val category: TextView = findViewById(R.id.product_category)
+        val name: TextView = findViewById(R.id.product_name)
+        val price: TextView = findViewById(R.id.product_price)
+        category.text = product.category
+        name.text = product.name
+        price.text = product.price.toString()
 
     }
 
@@ -71,7 +69,8 @@ class ProductActivity : AppCompatActivity() {
      * then pass that information to get the Product Price in that store
      * */
     private fun getStoreName(storeKey: String) {
-        val call = RetrofitProductsInit().productService().getStoreName(storeKey, idToken)
+        val call = RetrofitProductsInit(applicationContext).productService()
+            .getStoreName(storeKey, idToken)
         call.enqueue(object : Callback<String> {
 
             override fun onResponse(call: Call<String>, response: Response<String>) {
@@ -80,7 +79,7 @@ class ProductActivity : AppCompatActivity() {
                         val name: String = it
                         // Get the Price of the Product in the Store
                         // and associate it with the store name that was fetched
-                        val callPrice = RetrofitProductsInit().productService()
+                        val callPrice = RetrofitProductsInit(applicationContext).productService()
                             .getProductPriceFromStore(storeKey, productKey, idToken)
                         processProductPrice(callPrice, name, storeKey)
 
@@ -93,7 +92,6 @@ class ProductActivity : AppCompatActivity() {
                     ).show()
                 }
             }
-
 
 
             override fun onFailure(call: Call<String>, t: Throwable) {

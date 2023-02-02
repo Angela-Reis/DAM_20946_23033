@@ -7,7 +7,8 @@ import retrofit2.http.*
 
 /**
  * Specify the specific 'url' path to access
- *  all the queries need an auth which is the idToken of the authenticated user
+ *  all the queries need an authToken at the end
+ *  this token is the idToken of the authenticated user
  */
 interface ProductService {
 

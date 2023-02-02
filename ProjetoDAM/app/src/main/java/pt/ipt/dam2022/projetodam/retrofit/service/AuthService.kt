@@ -35,9 +35,9 @@ interface AuthService {
     ): Call<LoginUserResponse>
 
     @FormUrlEncoded
-    @POST("./token?key=AIzaSyBcGnZpZRKNtzHLLHgfqj1jMns8G2x_uPQ&grant_type=\"refresh_token\"")
+    @POST("./token?key=AIzaSyBcGnZpZRKNtzHLLHgfqj1jMns8G2x_uPQ&grant_type=refresh_token")
     fun refreshToken(
-        @Field("refresh_token") password: String?,
+        @Field("refresh_token") refreshToken: String?,
     ): Call<RefreshTokenResponse>
 
 
