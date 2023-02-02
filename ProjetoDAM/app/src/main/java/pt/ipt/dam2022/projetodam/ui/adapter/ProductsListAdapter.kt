@@ -16,10 +16,9 @@ import pt.ipt.dam2022.projetodam.ui.activity.ProductActivity
  * adapter to the data received to form the list
  */
 class ProductsListAdapter(
-    private val products: Map<String, Product>,
+    private val products: MutableMap<String, Product>,
     private val context: Context,
 ) : RecyclerView.Adapter<ProductsListAdapter.ViewHolder>() {
-    private val keys: List<String> = products.keys.toList()
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindView(product: Product, productKey: String) {
@@ -42,7 +41,7 @@ class ProductsListAdapter(
 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val productKey = keys[position]
+        val productKey = products.keys.toList()[position]
         val p = products[productKey]
         holder.let {
             if (p != null) {

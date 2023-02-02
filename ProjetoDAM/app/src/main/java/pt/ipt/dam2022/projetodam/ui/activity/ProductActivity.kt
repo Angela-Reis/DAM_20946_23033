@@ -3,6 +3,7 @@ package pt.ipt.dam2022.projetodam.ui.activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -26,6 +27,9 @@ class ProductActivity : AppCompatActivity() {
     lateinit var idToken: String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         val sharedPreference = getSharedPreferences("USER", MODE_PRIVATE)
         setContentView(R.layout.activity_product)
         if (intent.getSerializableExtra("Product") == null) {
@@ -63,6 +67,13 @@ class ProductActivity : AppCompatActivity() {
 
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
+        if (id == android.R.id.home) {
+            finish()
+        }
+        return false
+    }
 
     /**
      * get the Name of a particular Store via the storeKey

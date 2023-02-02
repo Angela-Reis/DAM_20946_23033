@@ -3,6 +3,7 @@ package pt.ipt.dam2022.projetodam.ui.activity.login
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -23,6 +24,7 @@ class SignUpActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
 
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // get reference to button
         val btnRegister = findViewById<Button>(R.id.buttonSignUp)
@@ -45,6 +47,15 @@ class SignUpActivity : AppCompatActivity() {
                 signUpUser(email, pass)
             }
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
+
+        if (id == android.R.id.home) {
+            finish()
+        }
+        return false
     }
 
     private fun isValidPassword(password: String): Boolean {

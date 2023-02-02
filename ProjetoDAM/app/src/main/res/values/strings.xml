@@ -13,4 +13,13 @@
     <string name="criar_conta">Criar Conta</string>
     <string name="sair">Sair</string>
     <string name="repetir_password">Repetir password</string>
+    <string name="pesquisar">Pesquisar</string>
+    <string name="definicoes">Definições</string>
+    <string name="inicio">Início</string>
+    <string name="sobre_a_app">Sobre a App</string>
+    <string name="alterar_password">Alterar Password</string>
+    <string name="aberto">Menu Aberto</string>
+    <string name="fechado">Menu Fechado</string>
+    <string name="informacao">Informação</string>
+    <string name="contactos">Contactos</string>
 </resources>
