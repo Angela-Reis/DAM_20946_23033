@@ -87,8 +87,10 @@ class MainActivity : AppCompatActivity() {
             )
         )
 
-        //Change to the ProductsFragment
-        changeFragment(ProductsFragment(), resources.getString(R.string.app_name))
+        if(savedInstanceState == null){
+            //Change to the ProductsFragment
+            changeFragment(ProductsFragment(), resources.getString(R.string.app_name))
+        }
     }
 
     //Change the fragment
