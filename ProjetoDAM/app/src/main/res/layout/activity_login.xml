@@ -12,35 +12,52 @@
         android:id="@+id/loginEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="10"
+        android:ems="15"
         android:hint="@string/email"
         android:inputType="textEmailAddress"
         android:minHeight="48dp"
         android:layout_marginBottom="25dp"
         android:autofillHints="" />
 
-    <EditText
-        android:id="@+id/loginPassword"
+    <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="25dp"
-        android:ems="10"
-        android:hint="@string/password"
-        android:importantForAutofill="no"
-        android:inputType="textPassword"
-        android:minHeight="50dp"
-        android:textColorHint="#757575" />
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/loginPassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="25dp"
+            android:ems="15"
+            android:hint="@string/password"
+            android:importantForAutofill="no"
+            android:inputType="textPassword"
+            android:minHeight="50dp"
+            android:textColorHint="#757575" />
+
+
+        <ImageButton
+            android:id="@+id/btnSeePass"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@id/loginPassword"
+            android:contentDescription="@string/ver_password"
+            android:minHeight="48dp"
+            android:src="@drawable/ic_baseline_eye" />
+
+    </RelativeLayout>
+
 
     <Button
         android:id="@+id/buttonLogin"
-        android:ems="10"
+        android:ems="15"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/entrar" />
 
     <Button
         android:id="@+id/buttonRegister"
-        android:ems="10"
+        android:ems="15"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/criar_conta" />

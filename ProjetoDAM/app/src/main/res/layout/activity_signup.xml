@@ -4,45 +4,80 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.activity.login.LoginActivity"
+    android:gravity="center"
     android:orientation="vertical"
-    android:gravity="center">
+    tools:context=".ui.activity.login.LoginActivity">
 
 
     <EditText
         android:id="@+id/txtEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="10"
+        android:layout_marginBottom="25dp"
+        android:autofillHints=""
+        android:ems="15"
         android:hint="@string/email"
         android:inputType="textEmailAddress"
-        android:minHeight="48dp"
-        android:layout_marginBottom="25dp"
-        android:autofillHints="" />
+        android:minHeight="48dp" />
 
-    <EditText
-        android:id="@+id/txtPassword"
+    <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="25dp"
-        android:ems="10"
-        android:hint="@string/password"
-        android:importantForAutofill="no"
-        android:inputType="textPassword"
-        android:minHeight="50dp"
-        android:textColorHint="#757575" />
+        android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/txtRepeatPassword"
+        <EditText
+            android:id="@+id/txtPassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="25dp"
+            android:ems="15"
+            android:hint="@string/password"
+            android:importantForAutofill="no"
+            android:inputType="textPassword"
+            android:minHeight="50dp"
+            android:textColorHint="#757575" />
+
+
+        <ImageButton
+            android:id="@+id/btnSeePass"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@id/txtPassword"
+            android:contentDescription="@string/ver_password"
+            android:minHeight="48dp"
+            android:src="@drawable/ic_baseline_eye" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="25dp"
-        android:ems="10"
-        android:hint="@string/repetir_password"
-        android:importantForAutofill="no"
-        android:inputType="textPassword"
-        android:minHeight="50dp"
-        android:textColorHint="#757575" />
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/txtRepeatPassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="25dp"
+            android:ems="15"
+            android:hint="@string/repetir_password"
+            android:importantForAutofill="no"
+            android:inputType="textPassword"
+            android:minHeight="50dp"
+            android:textColorHint="#757575" />
+
+
+        <ImageButton
+            android:id="@+id/btnSeeRepPass"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@id/txtRepeatPassword"
+            android:contentDescription="@string/ver_password_repetida"
+            android:minHeight="48dp"
+            android:src="@drawable/ic_baseline_eye" />
+
+    </RelativeLayout>
+
+
+
 
     <Button
         android:id="@+id/buttonSignUp"

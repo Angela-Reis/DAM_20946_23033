@@ -24,4 +24,6 @@
     <string name="contactos">Contactos</string>
     <string name="lojas">Lojas</string>
     <string name="categoria">Categoria</string>
+    <string name="ver_password">Ver password</string>
+    <string name="ver_password_repetida">Ver Password Repetida</string>
 </resources>

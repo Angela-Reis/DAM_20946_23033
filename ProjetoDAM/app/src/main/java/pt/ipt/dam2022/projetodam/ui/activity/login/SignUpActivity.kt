@@ -1,11 +1,15 @@
 package pt.ipt.dam2022.projetodam.ui.activity.login
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.text.method.PasswordTransformationMethod
 import android.util.Log
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.util.PatternsCompat
@@ -31,6 +35,10 @@ class SignUpActivity : AppCompatActivity() {
         val emailTxt = findViewById<EditText>(R.id.txtEmail)
         val passwordTxt = findViewById<EditText>(R.id.txtPassword)
         val repeatPasswordTxt = findViewById<EditText>(R.id.txtRepeatPassword)
+        val btnVerPass = findViewById<ImageButton>(R.id.btnSeePass)
+        val btnVerRepPass = findViewById<ImageButton>(R.id.btnSeeRepPass)
+        seePassword(passwordTxt, btnVerPass)
+        seePassword(repeatPasswordTxt, btnVerRepPass)
 
         // set on-click listener
         btnRegister.setOnClickListener {
@@ -124,5 +132,22 @@ class SignUpActivity : AppCompatActivity() {
                 Toast.makeText(applicationContext, "Aconteceu um erro", Toast.LENGTH_LONG).show()
             }
         })
+    }
+
+
+    /**
+     * Show password in textField when Image Button is pressed and hides password when button is released
+     */
+    @SuppressLint("ClickableViewAccessibility")
+    fun seePassword(textField: EditText, btn:ImageButton) {
+
+        btn.setOnTouchListener { v, event ->
+            when (event?.action) {
+                MotionEvent.ACTION_DOWN -> textField.transformationMethod = null
+                MotionEvent.ACTION_UP -> textField.transformationMethod = PasswordTransformationMethod()
+            }
+
+            v?.onTouchEvent(event) ?: true
+        }
     }
 }

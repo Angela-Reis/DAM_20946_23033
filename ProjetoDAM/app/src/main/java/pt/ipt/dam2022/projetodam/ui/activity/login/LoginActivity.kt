@@ -1,11 +1,15 @@
 package pt.ipt.dam2022.projetodam.ui.activity.login
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.method.PasswordTransformationMethod
 import android.util.Log
+import android.view.MotionEvent
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.core.util.PatternsCompat
 import org.json.JSONObject
@@ -46,6 +50,11 @@ class LoginActivity : AppCompatActivity() {
                 loginUser(email, pass)
             }
         }
+
+        val btnSeePass = findViewById<ImageButton>(R.id.btnSeePass)
+
+        //function that sets onTouchListener in order to show password
+        seePassword(passwordTxt, btnSeePass)
     }
 
     private fun checkForEmail(email: String): Boolean {
@@ -103,5 +112,22 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(applicationContext, "Aconteceu um erro a fazer login", Toast.LENGTH_LONG).show()
             }
         })
+    }
+
+
+    /**
+     * Show password in textField when Image Button is pressed and hides password when button is released
+     */
+    @SuppressLint("ClickableViewAccessibility")
+    fun seePassword(textField: EditText, btn:ImageButton) {
+
+        btn.setOnTouchListener { v, event ->
+            when (event?.action) {
+                MotionEvent.ACTION_DOWN -> textField.transformationMethod = null
+                MotionEvent.ACTION_UP -> textField.transformationMethod = PasswordTransformationMethod()
+            }
+
+            v?.onTouchEvent(event) ?: true
+        }
     }
 }
