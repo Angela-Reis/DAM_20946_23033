@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import pt.ipt.dam2022.projetodam.R
 import pt.ipt.dam2022.projetodam.model.Product
+import pt.ipt.dam2022.projetodam.model.Store
 import pt.ipt.dam2022.projetodam.retrofit.RetrofitProductsInit
 import pt.ipt.dam2022.projetodam.ui.adapter.ProductsListAdapter
 import retrofit2.Call
@@ -31,10 +33,13 @@ class ProductsFragment : Fragment(), MenuProvider {
     private lateinit var tempList: MutableMap<String, Product>
     private lateinit var idToken: String
     lateinit var recyclerView: RecyclerView
+    lateinit var textStore: TextView
+    lateinit var textCategory: TextView
+    lateinit var selectedStore: BooleanArray
+    lateinit var selectedCategory: BooleanArray
+    lateinit var stores: Map<String, Store>
+    lateinit var categories: Array<String?>
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,6 +57,8 @@ class ProductsFragment : Fragment(), MenuProvider {
             idToken = sharedPreference.getString("idTokenUser", null).toString()
         }
         recyclerView = view.findViewById(R.id.productList_view)
+        textStore = view.findViewById(R.id.selectStore)
+        textCategory = view.findViewById(R.id.selectCategory)
         listProducts()
         super.onViewCreated(view, savedInstanceState)
     }
@@ -81,6 +88,7 @@ class ProductsFragment : Fragment(), MenuProvider {
                         val products: Map<String, Product> = it
                         // takes the data read from API and shows it the interface
                         configureListProduct(products)
+                        getStore()
                     }
                 } else {
                     Toast.makeText(
@@ -122,9 +130,133 @@ class ProductsFragment : Fragment(), MenuProvider {
             columns, StaggeredGridLayoutManager.VERTICAL
         )
         recyclerView.layoutManager = layoutManager
+
+        //add menu after products are loaded
         val menuHost: MenuHost = requireActivity()
         menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
+        getStore()
     }
+
+
+    /**
+     * Get list of all stores and save it in the variable stores of type Map<String, Stores>
+     */
+    fun getStore() {
+        val call =
+            RetrofitProductsInit(requireContext()).productService().listAllStores(idToken)
+        // use data read
+        call.enqueue(object : Callback<Map<String, Store>> {
+            override fun onResponse(
+                call: Call<Map<String, Store>>, response: Response<Map<String, Store>>
+            ) {
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        stores = it
+                        // takes the data read from API and shows it the interface
+                        setLists()
+                    }
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "Ocorreu um erro a listar os produtos",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+
+            }
+
+            override fun onFailure(call: Call<Map<String, Store>>, t: Throwable) {
+                t.message?.let { Log.e("Can't read data ", it) }
+            }
+        })
+    }
+
+
+    /**
+     * Add options pop up to filter products when clicking on the textView for stores and categories
+     */
+    fun setLists() {
+        //extract all categories from the products
+        categories = (productsList.map { it.value.category }.distinct()).toTypedArray()
+
+        //initialize selected filter as all selected
+        selectedStore = BooleanArray(stores.size) { true }
+        selectedCategory = BooleanArray(categories.size) { true }
+
+
+        val storeArray = stores.map { it.value.name }.toTypedArray()
+        buildSelectorDialog(storeArray, textStore, selectedStore)
+        buildSelectorDialog(categories, textCategory, selectedCategory)
+    }
+
+
+    /**
+     + Build a clickListener for a TextView that opens a dialog with multi selection
+     */
+    private fun buildSelectorDialog(strings : Array<String?>, txtView : TextView, selectedArray : BooleanArray) {
+        txtView.setOnClickListener {
+            Toast.makeText(requireContext(), "Testar Clique", Toast.LENGTH_LONG).show()
+            val dialogList: Array<String?> = strings
+            val builderDialog = android.app.AlertDialog.Builder(requireContext())
+            builderDialog.setTitle("Select Item")
+
+            // alert dialog shouldn't be cancellable
+            builderDialog.setCancelable(false)
+
+            // Creating multiple selection by using setMutliChoiceItem method
+            builderDialog.setMultiChoiceItems(
+                dialogList, selectedArray
+            ) { dialog, whichButton, isChecked ->
+                selectedArray[whichButton] = isChecked
+            }
+
+
+            // handle the positive button of the dialog
+            builderDialog.setPositiveButton("Done") { dialog, which ->
+                filterData()
+            }
+
+            val alert = builderDialog.create()
+            alert.show()
+        }
+
+    }
+
+    /**
+     * filter tempList depending on the stores and categories selected
+     * remove from tempList the products that are not from the stores and categories selected
+     */
+    private fun filterData() {
+        //clear the tmpList, the list that is shown in the RecyclerView
+        tempList.clear()
+        //put all the products in tempList
+        tempList.putAll(productsList)
+        //get all the stores keys, these will be in the same order as tempList
+        var stores: List<String> = ArrayList(stores.keys)
+        //keys of stores selected
+        stores = stores.filterIndexed { index, value -> selectedStore[index] }
+        tempList.entries.retainAll {
+            elementCommon(ArrayList(it.value.stores?.keys), stores)
+        }
+
+        var categories: List<String> = categories.asList() as List<String>
+        categories = categories.filterIndexed { index, value -> selectedCategory[index] }
+        tempList.entries.retainAll {
+            categories.contains(it.value.category)
+        }
+        recyclerView.adapter?.notifyDataSetChanged()
+
+
+    }
+
+    /**
+     * Verify if the two arrays have at least one element in common
+     */
+    fun elementCommon(a: List<String>, b: List<String>): Boolean {
+        val set = a.toSet()
+        return b.any { it in set }
+    }
+
 
     /**
      * Initialize the menu, adding searchView
@@ -145,6 +277,7 @@ class ProductsFragment : Fragment(), MenuProvider {
                 tempList.clear()
                 //put all the products in tempList
                 tempList.putAll(productsList)
+                filterData()
                 //if text in searchView Exists
                 if (!newText.isNullOrEmpty()) {
                     //Filter the tmpList to only contain the products that contain the search text
@@ -159,6 +292,7 @@ class ProductsFragment : Fragment(), MenuProvider {
             }
         })
     }
+
 
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
         return false

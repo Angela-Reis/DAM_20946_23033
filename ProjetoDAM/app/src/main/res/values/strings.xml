@@ -22,4 +22,6 @@
     <string name="fechado">Menu Fechado</string>
     <string name="informacao">Informação</string>
     <string name="contactos">Contactos</string>
+    <string name="lojas">Lojas</string>
+    <string name="categoria">Categoria</string>
 </resources>
