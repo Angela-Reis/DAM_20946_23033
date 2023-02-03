@@ -17,3 +17,4 @@ data class Product (
     @SerializedName("stores") val stores: Map<String, Boolean>?
 ): Serializable
 
+

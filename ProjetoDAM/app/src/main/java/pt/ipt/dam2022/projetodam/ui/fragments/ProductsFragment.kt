@@ -33,12 +33,15 @@ class ProductsFragment : Fragment(), MenuProvider {
     private lateinit var tempList: MutableMap<String, Product>
     private lateinit var idToken: String
     lateinit var recyclerView: RecyclerView
-    lateinit var textStore: TextView
-    lateinit var textCategory: TextView
+    lateinit var selectStore: TextView
+    lateinit var selectCategory: TextView
+    lateinit var selectOrder: TextView
     lateinit var selectedStore: BooleanArray
     lateinit var selectedCategory: BooleanArray
     lateinit var stores: Map<String, Store>
     lateinit var categories: Array<String?>
+    var selectedOrder: Int = 0
+    val orderOptions: Array<String> = arrayOf("Preço Ascendente", "Preço Descendente")
 
 
     override fun onCreateView(
@@ -57,8 +60,10 @@ class ProductsFragment : Fragment(), MenuProvider {
             idToken = sharedPreference.getString("idTokenUser", null).toString()
         }
         recyclerView = view.findViewById(R.id.productList_view)
-        textStore = view.findViewById(R.id.selectStore)
-        textCategory = view.findViewById(R.id.selectCategory)
+        selectStore = view.findViewById(R.id.selectStore)
+        selectCategory = view.findViewById(R.id.selectCategory)
+        selectOrder = view.findViewById(R.id.selectOrder)
+
         listProducts()
         super.onViewCreated(view, savedInstanceState)
     }
@@ -117,6 +122,9 @@ class ProductsFragment : Fragment(), MenuProvider {
         productsList = products
         tempList = products.toMutableMap()
         recyclerView.adapter = ProductsListAdapter(tempList, requireContext())
+
+        //order tempList by option selected
+        orderProducts()
 
         //get current screen orientation
         val orientation = resources.configuration.orientation
@@ -184,9 +192,34 @@ class ProductsFragment : Fragment(), MenuProvider {
         selectedCategory = BooleanArray(categories.size) { true }
 
 
+        //tranform Map of stores into Array
         val storeArray = stores.map { it.value.name }.toTypedArray()
-        buildSelectorDialog(categories, textCategory, selectedCategory, "Selecione Categorias")
-        buildSelectorDialog(storeArray, textStore, selectedStore, "Selecione Lojas")
+
+        //build the multi selectores Dialog for stores and category
+        buildSelectorDialog(categories, selectCategory, selectedCategory, "Selecione Categorias")
+        buildSelectorDialog(storeArray, selectStore, selectedStore, "Selecione Lojas")
+
+
+        selectOrder.setOnClickListener {
+            val builderDialog = android.app.AlertDialog.Builder(requireContext())
+            builderDialog.setTitle("Ordenar por")
+
+
+            builderDialog.setSingleChoiceItems(orderOptions, selectedOrder) { dialogInterface, i ->
+                selectedOrder = i
+                filterData()
+                dialogInterface.dismiss()
+            }
+
+            builderDialog.setNeutralButton("Cancel") { dialog, which ->
+                dialog.cancel()
+            }
+
+            val alert = builderDialog.create()
+            alert.show()
+        }
+
+
     }
 
 
@@ -233,6 +266,7 @@ class ProductsFragment : Fragment(), MenuProvider {
     private fun filterData() {
         //clear the tmpList, the list that is shown in the RecyclerView
         tempList.clear()
+
         //put all the products in tempList
         tempList.putAll(productsList)
         //get all the stores keys, these will be in the same order as tempList
@@ -248,15 +282,39 @@ class ProductsFragment : Fragment(), MenuProvider {
         tempList.entries.retainAll {
             categories.contains(it.value.category)
         }
+
+        //order tempList in accordance to the selected option
+        orderProducts()
+
         recyclerView.adapter?.notifyDataSetChanged()
 
 
     }
 
     /**
+     * replace the prouduct Map in the recyclerView with a sorted version, depending on which option is selected
+     */
+    fun orderProducts() {
+        //Sort by the selected option
+        when (selectedOrder) {
+            0 -> tempList =
+                tempList.toList()
+                    .sortedBy { (_, value) -> value.price }
+                    .toMap().toMutableMap()
+            1 -> tempList =
+                tempList.toList()
+                    .sortedByDescending { (_, value) -> value.price }
+                    .toMap().toMutableMap()
+
+        }
+
+        (recyclerView.adapter as ProductsListAdapter).setProducts(tempList)
+    }
+
+    /**
      * Verify if the two arrays have at least one element in common
      */
-    fun elementCommon(a: List<String>, b: List<String>): Boolean {
+    private fun elementCommon(a: List<String>, b: List<String>): Boolean {
         val set = a.toSet()
         return b.any { it in set }
     }

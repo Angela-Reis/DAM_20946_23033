@@ -16,7 +16,7 @@ import pt.ipt.dam2022.projetodam.ui.activity.ProductActivity
  * adapter to the data received to form the list
  */
 class ProductsListAdapter(
-    private val products: MutableMap<String, Product>,
+    private var products: MutableMap<String, Product>,
     private val context: Context,
 ) : RecyclerView.Adapter<ProductsListAdapter.ViewHolder>() {
 
@@ -58,5 +58,9 @@ class ProductsListAdapter(
 
     override fun getItemCount(): Int {
         return products.size
+    }
+
+    fun setProducts(newProducts : MutableMap<String, Product>){
+        products = newProducts
     }
 }

@@ -20,11 +20,8 @@ interface ProductService {
     fun listAllProducts(@Query("auth") authToken : String): Call<Map<String, Product>>
 
 
-    /*
-     * get a specific Store Information
-     */
-    @GET("/store/{store}/name.json")
-    fun getStoreName(@Path("store") storeKey: String, @Query("auth") authToken : String): Call<String>
+    @GET("/store/{store}.json")
+    fun getStore(@Path("store") storeKey: String, @Query("auth") authToken : String): Call<Store>
 
     /*
      * get a list with all Stores

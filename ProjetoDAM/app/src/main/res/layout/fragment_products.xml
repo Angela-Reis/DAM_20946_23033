@@ -23,29 +23,46 @@
                 android:id="@+id/selectCategory"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@android:drawable/editbox_background"
-                android:backgroundTint= "?android:colorAccent"
-                android:hint="@string/categoria"
-                android:drawablePadding="10dp"
-                android:padding="10dp"
-                app:drawableEndCompat="@drawable/ic_baseline_arrow_drop_down_24"
                 android:layout_weight="1"
+                android:background="@android:drawable/editbox_background"
+                android:backgroundTint="?android:colorAccent"
                 android:clickable="true"
-                android:focusable="true" />
+                android:drawablePadding="10dp"
+                android:focusable="true"
+                android:hint="@string/categorias"
+                android:minHeight="48dp"
+                android:padding="10dp"
+                app:drawableEndCompat="@drawable/ic_baseline_arrow_drop_down_24" />
 
             <TextView
                 android:id="@+id/selectStore"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@android:drawable/editbox_background"
-                android:backgroundTint= "?android:colorAccent"
-                android:hint="@string/lojas"
-                android:drawablePadding="10dp"
-                android:padding="10dp"
-                app:drawableEndCompat="@drawable/ic_baseline_arrow_drop_down_24"
                 android:layout_weight="1"
+                android:background="@android:drawable/editbox_background"
+                android:backgroundTint="?android:colorAccent"
                 android:clickable="true"
-                android:focusable="true" />
+                android:drawablePadding="10dp"
+                android:focusable="true"
+                android:hint="@string/lojas"
+                android:minHeight="48dp"
+                android:padding="10dp"
+                app:drawableEndCompat="@drawable/ic_baseline_arrow_drop_down_24" />
+
+            <TextView
+                android:id="@+id/selectOrder"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:drawable/editbox_background"
+                android:backgroundTint="?android:colorAccent"
+                android:clickable="true"
+                android:drawablePadding="10dp"
+                android:focusable="true"
+                android:hint="@string/ordenar"
+                android:minHeight="48dp"
+                android:padding="10dp"
+                app:drawableEndCompat="@drawable/ic_baseline_arrow_drop_down_24" />
 
 
         </LinearLayout>

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import pt.ipt.dam2022.projetodam.R
 import pt.ipt.dam2022.projetodam.model.Product
+import pt.ipt.dam2022.projetodam.model.Store
 import pt.ipt.dam2022.projetodam.model.StorePrice
 import pt.ipt.dam2022.projetodam.retrofit.RetrofitProductsInit
 import pt.ipt.dam2022.projetodam.ui.activity.login.LoginActivity
@@ -52,7 +53,7 @@ class ProductActivity : AppCompatActivity() {
                 "PRODUCT KEY =  $productKey STORE KEY= ${entry.key}",
                 Toast.LENGTH_LONG
             ).show()*/
-            getStoreName(entry.key)
+            getStore(entry.key)
 
             // var allStorePrices: Map<String keyStore, >
             // getStorePrice(entry.key, productKey)
@@ -79,20 +80,17 @@ class ProductActivity : AppCompatActivity() {
      * get the Name of a particular Store via the storeKey
      * then pass that information to get the Product Price in that store
      * */
-    private fun getStoreName(storeKey: String) {
+    private fun getStore(storeKey: String) {
         val call = RetrofitProductsInit(applicationContext).productService()
-            .getStoreName(storeKey, idToken)
-        call.enqueue(object : Callback<String> {
+            .getStore(storeKey, idToken)
+        call.enqueue(object : Callback<Store> {
 
-            override fun onResponse(call: Call<String>, response: Response<String>) {
+            override fun onResponse(call: Call<Store>, response: Response<Store>) {
                 if (response.isSuccessful) {
                     response.body()?.let {
-                        val name: String = it
                         // Get the Price of the Product in the Store
                         // and associate it with the store name that was fetched
-                        val callPrice = RetrofitProductsInit(applicationContext).productService()
-                            .getProductPriceFromStore(storeKey, productKey, idToken)
-                        processProductPrice(callPrice, name, storeKey)
+                        getProductPrice(it, storeKey)
 
                     }
                 } else {
@@ -105,7 +103,7 @@ class ProductActivity : AppCompatActivity() {
             }
 
 
-            override fun onFailure(call: Call<String>, t: Throwable) {
+            override fun onFailure(call: Call<Store>, t: Throwable) {
                 t.message?.let { Log.e("Can't read data ", it) }
             }
         })
@@ -115,14 +113,16 @@ class ProductActivity : AppCompatActivity() {
     /**
      * Process the Call to get ProductPrice
      */
-    private fun processProductPrice(call: Call<StorePrice>, name: String, storeKey: String) {
+    private fun getProductPrice(store: Store, storeKey: String) {
+        val call = RetrofitProductsInit(applicationContext).productService()
+            .getProductPriceFromStore(storeKey, productKey, idToken)
         // use data read
         call.enqueue(object : Callback<StorePrice> {
             override fun onResponse(call: Call<StorePrice>, response: Response<StorePrice>) {
                 if (response.isSuccessful) {
                     response.body()?.let {
                         val result: StorePrice = it
-                        result.storeName = name
+                        result.storeName = store.name
                         result.storeKey = storeKey
                         storePrices.add(result)
                         configureListPrice()
