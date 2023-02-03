@@ -41,7 +41,7 @@ class ProductsFragment : Fragment(), MenuProvider {
     lateinit var stores: Map<String, Store>
     lateinit var categories: Array<String?>
     var selectedOrder: Int = 0
-    val orderOptions: Array<String> = arrayOf("Preço Ascendente", "Preço Descendente")
+    private val orderOptions: Array<String> = arrayOf("Preço Ascendente", "Preço Descendente")
 
 
     override fun onCreateView(

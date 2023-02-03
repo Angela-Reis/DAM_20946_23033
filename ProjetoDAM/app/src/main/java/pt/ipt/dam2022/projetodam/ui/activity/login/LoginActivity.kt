@@ -12,10 +12,8 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.core.util.PatternsCompat
-import org.json.JSONObject
 import pt.ipt.dam2022.projetodam.R
 import pt.ipt.dam2022.projetodam.model.auth.LoginUserResponse
-import pt.ipt.dam2022.projetodam.model.auth.SignUpResponse
 import pt.ipt.dam2022.projetodam.retrofit.RetrofitAuthInit
 import pt.ipt.dam2022.projetodam.ui.activity.MainActivity
 import retrofit2.Call
@@ -65,18 +63,18 @@ class LoginActivity : AppCompatActivity() {
     }
 
     /**
-     * access api with the call specified in registerUser
+     * access api with the call specified in loginUser
      */
     private fun loginUser(email: String, password: String) {
         val call = RetrofitAuthInit().authService().loginUser(email, password, true)
-        processRegister(call)
+        processLogin(call)
     }
 
 
     /**
      * add the User to sharedPreference to keep token when the app is shut down
      */
-    private fun processRegister(call: Call<LoginUserResponse>) {
+    private fun processLogin(call: Call<LoginUserResponse>) {
         // use data read
         call.enqueue(object : Callback<LoginUserResponse> {
             override fun onResponse(

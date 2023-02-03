@@ -27,4 +27,6 @@
     <string name="ver_password">Ver password</string>
     <string name="ver_password_repetida">Ver Password Repetida</string>
     <string name="ordenar">Ordenar</string>
+    <string name="repetir_nova_password">Repetir Nova Password</string>
+    <string name="nova_password">Nova Password</string>
 </resources>

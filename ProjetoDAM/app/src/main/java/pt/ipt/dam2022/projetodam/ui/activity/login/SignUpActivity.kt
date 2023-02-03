@@ -31,7 +31,7 @@ class SignUpActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // get reference to button
-        val btnRegister = findViewById<Button>(R.id.buttonSignUp)
+        val btnSignUp = findViewById<Button>(R.id.buttonSignUp)
         val emailTxt = findViewById<EditText>(R.id.txtEmail)
         val passwordTxt = findViewById<EditText>(R.id.txtPassword)
         val repeatPasswordTxt = findViewById<EditText>(R.id.txtRepeatPassword)
@@ -41,7 +41,7 @@ class SignUpActivity : AppCompatActivity() {
         seePassword(repeatPasswordTxt, btnVerRepPass)
 
         // set on-click listener
-        btnRegister.setOnClickListener {
+        btnSignUp.setOnClickListener {
             val email = emailTxt.text.toString()
             val pass = passwordTxt.text.toString()
             if(!isValidPassword(passwordTxt.text.toString())){
@@ -66,8 +66,11 @@ class SignUpActivity : AppCompatActivity() {
         return false
     }
 
+    /**
+     * Verify if password is valid, longer than 6 and with an Upper Case letter
+     */
     private fun isValidPassword(password: String): Boolean {
-        if (password.length < 8) return false
+        if (password.length < 6) return false
         if (password.filter { it.isDigit() }.firstOrNull() == null) return false
         if (password.filter { it.isLetter() }.filter { it.isUpperCase() }.firstOrNull() == null) return false
         return true
