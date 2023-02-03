@@ -15,16 +15,19 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:background="?colorPrimary"
+            android:padding="10dp">
 
             <TextView
                 android:id="@+id/selectCategory"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@android:drawable/editbox_background"
+                android:backgroundTint= "?android:colorAccent"
                 android:hint="@string/categoria"
-                android:drawablePadding="16dp"
-                android:padding="12dp"
+                android:drawablePadding="10dp"
+                android:padding="10dp"
                 app:drawableEndCompat="@drawable/ic_baseline_arrow_drop_down_24"
                 android:layout_weight="1"
                 android:clickable="true"
@@ -35,9 +38,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@android:drawable/editbox_background"
+                android:backgroundTint= "?android:colorAccent"
                 android:hint="@string/lojas"
-                android:drawablePadding="16dp"
-                android:padding="12dp"
+                android:drawablePadding="10dp"
+                android:padding="10dp"
                 app:drawableEndCompat="@drawable/ic_baseline_arrow_drop_down_24"
                 android:layout_weight="1"
                 android:clickable="true"
@@ -49,7 +53,8 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/productList_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:padding="10dp"/>
 
     </LinearLayout>
 </FrameLayout>

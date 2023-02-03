@@ -185,20 +185,24 @@ class ProductsFragment : Fragment(), MenuProvider {
 
 
         val storeArray = stores.map { it.value.name }.toTypedArray()
-        buildSelectorDialog(storeArray, textStore, selectedStore)
-        buildSelectorDialog(categories, textCategory, selectedCategory)
+        buildSelectorDialog(categories, textCategory, selectedCategory, "Selecione Categorias")
+        buildSelectorDialog(storeArray, textStore, selectedStore, "Selecione Lojas")
     }
 
 
     /**
-     + Build a clickListener for a TextView that opens a dialog with multi selection
+    + Build a clickListener for a TextView that opens a dialog with multi selection
      */
-    private fun buildSelectorDialog(strings : Array<String?>, txtView : TextView, selectedArray : BooleanArray) {
+    private fun buildSelectorDialog(
+        strings: Array<String?>,
+        txtView: TextView,
+        selectedArray: BooleanArray,
+        title: String
+    ) {
         txtView.setOnClickListener {
-            Toast.makeText(requireContext(), "Testar Clique", Toast.LENGTH_LONG).show()
             val dialogList: Array<String?> = strings
             val builderDialog = android.app.AlertDialog.Builder(requireContext())
-            builderDialog.setTitle("Select Item")
+            builderDialog.setTitle(title)
 
             // alert dialog shouldn't be cancellable
             builderDialog.setCancelable(false)
@@ -212,7 +216,7 @@ class ProductsFragment : Fragment(), MenuProvider {
 
 
             // handle the positive button of the dialog
-            builderDialog.setPositiveButton("Done") { dialog, which ->
+            builderDialog.setPositiveButton("OK") { dialog, which ->
                 filterData()
             }
 
