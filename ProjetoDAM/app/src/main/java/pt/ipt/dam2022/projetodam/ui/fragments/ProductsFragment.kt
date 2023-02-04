@@ -1,6 +1,8 @@
 package pt.ipt.dam2022.projetodam.ui.fragments
 
 import android.app.AlertDialog
+import android.app.SearchManager
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
@@ -16,10 +18,16 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.journeyapps.barcodescanner.ScanContract
+import com.journeyapps.barcodescanner.ScanIntentResult
+import com.journeyapps.barcodescanner.ScanOptions
 import pt.ipt.dam2022.projetodam.R
 import pt.ipt.dam2022.projetodam.model.Product
 import pt.ipt.dam2022.projetodam.model.Store
 import pt.ipt.dam2022.projetodam.retrofit.RetrofitProductsInit
+import pt.ipt.dam2022.projetodam.ui.activity.CaptureBarCodeAct
+import pt.ipt.dam2022.projetodam.ui.activity.ProductActivity
 import pt.ipt.dam2022.projetodam.ui.adapter.ProductsListAdapter
 import retrofit2.Call
 import retrofit2.Callback
@@ -44,6 +52,100 @@ class ProductsFragment : Fragment(), MenuProvider {
     lateinit var categories: Array<String?>
     var selectedOrder: Int = 0
     private val orderOptions: Array<String> = arrayOf("Preço Ascendente", "Preço Descendente")
+    private var dialog: AlertDialog? = null
+
+
+    // Register the launcher and result handler of the bar code Scanner
+    private val barcodeLauncher = registerForActivityResult(
+        ScanContract()
+    ) { result: ScanIntentResult ->
+        if (result.contents == null) {
+            Toast.makeText(context, "Cancelled", Toast.LENGTH_LONG).show()
+        } else {
+            //Process the bar code to check if product exists
+            checkProductExistence(result.contents)
+            // adding ALERT Dialog builder object and passing activity as parameter
+            val builder = AlertDialog.Builder(activity)
+            val inflater = requireActivity().layoutInflater
+            builder.setView(inflater.inflate(R.layout.loading, null))
+            builder.setCancelable(false)
+
+            dialog = builder.create()
+            (dialog as AlertDialog).show()
+        }
+    }
+
+    private fun checkProductExistence(barcode: String) {
+        val call = RetrofitProductsInit(requireContext()).productService().getProductBarCode("\"barcode\"", "\"" +barcode + "\"", idToken)
+        // use data read
+        call.enqueue(object : Callback<Map<String, Product>> {
+            override fun onResponse(
+                call: Call<Map<String, Product>>, response: Response<Map<String, Product>>
+            ) {
+                dialog?.dismiss()
+                if (response.isSuccessful) {
+                        // takes the data read from API and shows it the interface
+                        processBarCodeResult(response.body(), barcode)
+
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "Ocorreu um erro a pesquisar pelo produto",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+
+            }
+
+            override fun onFailure(call: Call<Map<String, Product>>, t: Throwable) {
+                dialog?.dismiss()
+                t.message?.let { Log.e("Can't read data ", it) }
+                Toast.makeText(
+                    requireContext(),
+                    "Ocorreu um erro a pesquisar pelo produto",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        })
+
+
+    }
+
+    fun processBarCodeResult(resultProduct : Map<String,Product>?, barcode: String){
+        if(resultProduct !=null && resultProduct.isNotEmpty()){
+            //if response is not null, grab the first item,
+            val productKey = resultProduct.keys.toList()[0]
+            val p = resultProduct[productKey]
+
+            //open product page
+            val intent = Intent(context, ProductActivity::class.java)
+            intent.putExtra("Product", p)
+            intent.putExtra("ProductKey", productKey)
+            startActivity(intent)
+        }else {
+            //in case the product with corresponding barcode is not found in the DB
+            // ask user if they wish to search online
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Resultado do Scan")
+            builder.setMessage(
+                "Não foi encontrado o produto $barcode na App \n" +
+                        "Deseja pesquisá-lo na internet?"
+            )
+
+            builder.setPositiveButton("Pesquisar") { dialog, which ->
+                //Open Activity with web search of product bar code
+                val intent = Intent(Intent.ACTION_WEB_SEARCH)
+                intent.putExtra(SearchManager.QUERY, barcode)
+                startActivity(intent)
+            }
+
+            builder.setNegativeButton("Cancelar") { dialog, which ->
+
+            }
+            builder.show()
+
+        }
+    }
 
 
     override fun onCreateView(
@@ -67,6 +169,16 @@ class ProductsFragment : Fragment(), MenuProvider {
         selectOrder = view.findViewById(R.id.selectOrder)
 
         listProducts()
+
+        //add refresh products when swiping down
+        val pullToRefresh: SwipeRefreshLayout = view.findViewById(R.id.pullToRefresh)
+        pullToRefresh.setOnRefreshListener {
+            listProducts() // your code
+            pullToRefresh.isRefreshing = false
+        }
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -95,7 +207,6 @@ class ProductsFragment : Fragment(), MenuProvider {
                         val products: Map<String, Product> = it
                         // takes the data read from API and shows it the interface
                         configureListProduct(products)
-                        getStore()
                     }
                 } else {
                     Toast.makeText(
@@ -141,9 +252,6 @@ class ProductsFragment : Fragment(), MenuProvider {
         )
         recyclerView.layoutManager = layoutManager
 
-        //add menu after products are loaded
-        val menuHost: MenuHost = requireActivity()
-        menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
         getStore()
     }
 
@@ -184,7 +292,7 @@ class ProductsFragment : Fragment(), MenuProvider {
     /**
      * Set color of button of dialog
      */
-    fun setDialogButtonColor(dialog: AlertDialog){
+    fun setDialogButtonColor(dialog: AlertDialog) {
         dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(
             ContextCompat.getColor(
                 requireContext(), R.color.teal_200
@@ -204,10 +312,9 @@ class ProductsFragment : Fragment(), MenuProvider {
         //extract all categories from the products
         categories = (productsList.map { it.value.category }.distinct()).toTypedArray()
 
-        //initialize selected filter as all selected
+        //initialize selected filter, if they haven't yet been, as all selected
         selectedStore = BooleanArray(stores.size) { true }
         selectedCategory = BooleanArray(categories.size) { true }
-
 
         //tranform Map of stores into Array
         val storeArray = stores.map { it.value.name }.toTypedArray()
@@ -288,14 +395,15 @@ class ProductsFragment : Fragment(), MenuProvider {
         //clear the tmpList, the list that is shown in the RecyclerView
         tempList.clear()
 
+
         //put all the products in tempList
         tempList.putAll(productsList)
         //get all the stores keys, these will be in the same order as tempList
-        var stores: List<String> = ArrayList(stores.keys)
+        var storesList: List<String> = ArrayList(stores.keys)
         //keys of stores selected
-        stores = stores.filterIndexed { index, value -> selectedStore[index] }
+        storesList = storesList.filterIndexed { index, value -> selectedStore[index] }
         tempList.entries.retainAll {
-            elementCommon(ArrayList(it.value.stores?.keys), stores)
+            elementCommon(ArrayList(it.value.stores?.keys), storesList)
         }
 
         var categories: List<String> = categories.asList() as List<String>
@@ -374,6 +482,21 @@ class ProductsFragment : Fragment(), MenuProvider {
                 return false
             }
         })
+
+        val itemScan = menu.findItem(R.id.menu_scanner)
+        itemScan.setOnMenuItemClickListener {
+            //Set options for barScanner
+            var options = ScanOptions()
+            options.setPrompt("Clique no butão Aumentar Volume para ligar Flash")
+            options.setOrientationLocked(false)
+            //Use class that extends CaptureActivity
+            // and is referenced in Manifest as having screenRotation fullSensor
+            options.captureActivity = CaptureBarCodeAct::class.java
+            options.setBeepEnabled(false)
+            //Lanch the bar Scanner
+            barcodeLauncher.launch(options);
+            true
+        }
     }
 
 

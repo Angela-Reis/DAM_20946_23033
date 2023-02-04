@@ -29,4 +29,5 @@
     <string name="ordenar">Ordenar</string>
     <string name="repetir_nova_password">Repetir Nova Password</string>
     <string name="nova_password">Nova Password</string>
+    <string name="leitor_de_codigo_de_barras">Leitor de código de barras</string>
 </resources>

@@ -42,6 +42,17 @@ interface ProductService {
         @Query("auth") authToken: String
     ): Call<StorePrice>
 
+
+    /*
+     * search for product with barcode
+     */
+    @GET("/product.json")
+    fun getProductBarCode(
+        @Query("orderBy") orderBy: String,
+        @Query("equalTo") barcode: String,
+        @Query("auth") authToken: String
+    ): Call<Map<String, Product>>
+
 }
 
 

@@ -7,7 +7,6 @@ import okhttp3.OkHttpClient
 import pt.ipt.dam2022.projetodam.retrofit.service.ProductService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.scalars.ScalarsConverterFactory
 
 
 /**
@@ -30,7 +29,6 @@ class RetrofitProductsInit(private var context: Context) {
     private val retrofit = Retrofit.Builder()
         .baseUrl(host)
         .addConverterFactory(GsonConverterFactory.create(gson))
-        .addConverterFactory(ScalarsConverterFactory.create())
         .client(client)
         .build()
 

@@ -35,6 +35,7 @@ class ProductActivity : AppCompatActivity() {
     private lateinit var product: Product
     private var storePrices = ArrayList<StorePrice>()
     lateinit var idToken: String
+    lateinit var recyclerView : RecyclerView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -68,6 +69,13 @@ class ProductActivity : AppCompatActivity() {
         price.text = pTxt
 
         product.image?.let { downloadImageTask(findViewById(R.id.imageView2), it) }
+
+
+        //initialize recyclerView with list of stores
+        recyclerView = findViewById(R.id.productList_recyclerview)
+        recyclerView.adapter = ProductPricesAdapter(storePrices, this)
+        recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+
 
     }
 
@@ -150,7 +158,8 @@ class ProductActivity : AppCompatActivity() {
                         result.storeName = store.name
                         result.storeKey = storeKey
                         storePrices.add(result)
-                        configureListPrice()
+                        //Notify the view that storeArray was changed
+                        recyclerView.adapter?.notifyDataSetChanged()
                     }
                 } else {
                     Toast.makeText(
@@ -165,20 +174,6 @@ class ProductActivity : AppCompatActivity() {
                 t.message?.let { Log.e("Can't read data ", it) }
             }
         })
-    }
-
-
-    /**
-     * configure each 'fragment' to show the data of the store Price
-     */
-    private fun configureListPrice() {
-        if (storePrices.size != product.stores?.size) {
-            return
-        }
-        val recyclerView = findViewById<RecyclerView>(R.id.productList_recyclerview)
-        recyclerView.adapter = ProductPricesAdapter(storePrices, this)
-        recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-
     }
 
 }

@@ -28,9 +28,10 @@
                         </option>
                         <option name="values">
                           <map>
+                            <entry key="assetSourceType" value="FILE" />
                             <entry key="color" value="ffffff" />
-                            <entry key="outputName" value="ic_baseline_search_24" />
-                            <entry key="sourceFile" value="D:\Users\Angela\Desktop\licenciatura\3_Ano\Desenvolvimento_Aplicacoes_Moveis\Trab_Final\ProjetoDAM" />
+                            <entry key="outputName" value="download" />
+                            <entry key="sourceFile" value="D:\Users\Angela\Downloads\download.svg" />
                           </map>
                         </option>
                       </PersistentState>

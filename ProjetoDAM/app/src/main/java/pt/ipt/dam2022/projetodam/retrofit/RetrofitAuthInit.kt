@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder
 import pt.ipt.dam2022.projetodam.retrofit.service.AuthService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.scalars.ScalarsConverterFactory
 
 /**
  * access Firebase Auth REST API
@@ -21,7 +20,6 @@ class RetrofitAuthInit {
     private val retrofit = Retrofit.Builder()
         .baseUrl(host)
         .addConverterFactory(GsonConverterFactory.create(gson))
-        .addConverterFactory(ScalarsConverterFactory.create())
         .build()
 
     fun authService(): AuthService = retrofit.create(AuthService::class.java)
