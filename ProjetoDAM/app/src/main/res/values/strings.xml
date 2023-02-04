@@ -3,8 +3,8 @@
     <string name="menu">Menu</string>
     <string name="filter">Filter</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="testlist">testlist</string>
-    <string name="testlist2">testlist2</string>
-    <string name="testlist3">testlist3</string>
-    <string name="sobre_nos">Sobre Nós</string>
+    <string name="home_String">Início</string>
+    <string name="generic_user_logged_text">User</string>
+    <string name="about_us_title">Sobre Nós</string>
+    <string name="about_us_text">Sobre a aplicação</string>
 </resources>

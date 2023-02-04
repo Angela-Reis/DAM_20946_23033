@@ -1,40 +1,48 @@
 package pt.ipt.dam2022.projetodam.ui.activity
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.content.Intent
 import android.view.View
+import android.widget.ImageButton
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.google.android.material.navigation.NavigationView
 import pt.ipt.dam2022.projetodam.R
 import pt.ipt.dam2022.projetodam.model.Product
 import pt.ipt.dam2022.projetodam.retrofit.RetrofitInitializer
 import pt.ipt.dam2022.projetodam.ui.adapter.ProductsListAdapter
-import pt.ipt.dam2022.projetodam.ui.fragments.MainActivityHeaderFragment
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
-    lateinit var header:MainActivityHeaderFragment
+
+    lateinit var drawerLayout: DrawerLayout
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        header = MainActivityHeaderFragment()
+        drawerLayout = findViewById(R.id.drawer_layout)
 
-        addMenuOptions()
+        val aboutUsItem:View = findViewById(R.id.about_us_menu_item)
 
-        val headerTransaction = supportFragmentManager.beginTransaction()
-        headerTransaction.add(R.id.headerFragment,header)
-        headerTransaction.addToBackStack(null)
-        headerTransaction.commit()
+        aboutUsItem.setOnClickListener {
+            changeToAboutUsActivity(it)
+        }
+
+        val button:ImageButton = findViewById(R.id.btn_menu)
+
+        button.setOnClickListener{
+            ClickMenu(it)
+        }
 
         //Request that have not been granted at this point
         requestPermissionsIfNecessary(
@@ -49,19 +57,17 @@ class MainActivity : AppCompatActivity() {
         listProducts()
     }
 
-    /**
-     * function to programmatically add options to the NavigationView Menu
-     */
-    private fun addMenuOptions(){
-        var menu:NavigationView = findViewById(R.id.navigation_view)
+    fun ClickMenu(view:View) {openDrawer(drawerLayout)}
 
-        menu.menu.add("Test")
-        menu.menu.add("Test")
-        menu.menu.add("Test")
-        menu.menu.add("Test")
-        menu.menu.add("Test")
-        menu.menu.add("Test")
+    private fun openDrawer(drawerLayout: DrawerLayout){
+        drawerLayout.openDrawer(GravityCompat.START)
     }
+
+    fun changeToAboutUsActivity(view: View){
+        val intent = Intent(this, AboutUsActivity::class.java)
+        startActivity(intent)
+    }
+
 
     /**
      * function to collect user permission
@@ -136,11 +142,6 @@ class MainActivity : AppCompatActivity() {
      */
     fun changeActivity(view: View){
         val intent = Intent(this, TestActivity::class.java)
-        startActivity(intent)
-    }
-
-    fun changeToAboutUsActivity(){
-        val intent = Intent(this, AboutUsActivity::class.java)
         startActivity(intent)
     }
 }
