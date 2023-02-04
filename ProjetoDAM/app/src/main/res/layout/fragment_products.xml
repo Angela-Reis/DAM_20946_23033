@@ -30,7 +30,7 @@
                 android:clickable="true"
                 android:drawablePadding="10dp"
                 android:focusable="true"
-                android:hint="@string/categorias"
+                android:hint="@string/category"
                 android:minHeight="48dp"
                 android:padding="10dp"
                 app:drawableEndCompat="@drawable/ic_baseline_arrow_drop_down_24" />
@@ -45,7 +45,7 @@
                 android:clickable="true"
                 android:drawablePadding="10dp"
                 android:focusable="true"
-                android:hint="@string/lojas"
+                android:hint="@string/stores"
                 android:minHeight="48dp"
                 android:padding="10dp"
                 app:drawableEndCompat="@drawable/ic_baseline_arrow_drop_down_24" />
@@ -60,7 +60,7 @@
                 android:clickable="true"
                 android:drawablePadding="10dp"
                 android:focusable="true"
-                android:hint="@string/ordenar"
+                android:hint="@string/order"
                 android:minHeight="48dp"
                 android:padding="10dp"
                 app:drawableEndCompat="@drawable/ic_baseline_arrow_drop_down_24" />

@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
 
         //Toggle that is connect to the drawerLayout
         //tooggle decides what item it should show an arrow or the menu item
-        toggleDrawer = ActionBarDrawerToggle(this, drawerLayout, R.string.aberto, R.string.fechado)
+        toggleDrawer = ActionBarDrawerToggle(this, drawerLayout, R.string.menu_open, R.string.menu_closed)
         drawerLayout.addDrawerListener(toggleDrawer)
 
         //Synchronize the state of the drawer toggle with the DrawerLayout
@@ -73,10 +73,10 @@ class MainActivity : AppCompatActivity() {
                 R.id.home -> changeFragment(
                     ProductsFragment(), resources.getString(R.string.app_name)
                 )
-                R.id.sobre -> changeFragment(AboutAppFragment(), it.title.toString())
-                R.id.contactos -> changeFragment(ContactFragment(), it.title.toString())
-                R.id.alterarPass -> changeFragment(ChangePassFragment(), it.title.toString())
-                R.id.sair -> logOut()
+                R.id.about -> changeFragment(AboutAppFragment(), it.title.toString())
+                R.id.contacts -> changeFragment(ContactFragment(), it.title.toString())
+                R.id.changePass -> changeFragment(ChangePassFragment(), it.title.toString())
+                R.id.exit -> logOut()
             }
             true
         }

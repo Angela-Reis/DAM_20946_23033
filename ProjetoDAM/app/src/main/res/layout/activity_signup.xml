@@ -42,7 +42,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignEnd="@id/txtPassword"
-            android:contentDescription="@string/ver_password"
+            android:contentDescription="@string/see_password"
             android:minHeight="48dp"
             android:src="@drawable/ic_baseline_eye" />
 
@@ -58,7 +58,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="25dp"
             android:ems="15"
-            android:hint="@string/repetir_password"
+            android:hint="@string/repeat_password"
             android:importantForAutofill="no"
             android:inputType="textPassword"
             android:minHeight="50dp"
@@ -70,7 +70,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignEnd="@id/txtRepeatPassword"
-            android:contentDescription="@string/ver_password_repetida"
+            android:contentDescription="@string/see_repeat_password"
             android:minHeight="48dp"
             android:src="@drawable/ic_baseline_eye" />
 
@@ -84,5 +84,5 @@
         android:ems="10"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/criar_conta" />
+        android:text="@string/create_account" />
 </LinearLayout>

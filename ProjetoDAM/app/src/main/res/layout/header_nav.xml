@@ -5,6 +5,7 @@
     android:orientation="vertical"
     android:visibility="visible">
 
+    <!-- header of the NavigationView in activity_main -->
 
     <TextView
         android:layout_width="match_parent"

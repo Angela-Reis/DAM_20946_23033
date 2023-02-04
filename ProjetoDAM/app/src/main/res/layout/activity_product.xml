@@ -8,6 +8,7 @@
     tools:context=".ui.activity.ProductActivity"
     android:fillViewport="true">
 
+    <!-- Used by activity_product all the text and image is replaced -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -27,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Nome Produto"
+            android:text="Categoria Produto"
             android:textAlignment="center"
             android:textSize="18sp" />
 
@@ -45,6 +46,14 @@
             android:layout_height="wrap_content"
             android:text="Preço Mais Baixo"
             android:textSize="30sp" />
+        <TextView
+            android:id="@+id/product_barcode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Barcode Produto"
+            android:textAlignment="center"
+            android:textSize="15sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -57,7 +66,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/lojas"
+                android:text="@string/stores"
                 android:textSize="30sp" />
 
             <View

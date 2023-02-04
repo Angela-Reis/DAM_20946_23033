@@ -35,7 +35,7 @@ class ProductActivity : AppCompatActivity() {
     private lateinit var product: Product
     private var storePrices = ArrayList<StorePrice>()
     lateinit var idToken: String
-    lateinit var recyclerView : RecyclerView
+    lateinit var recyclerView: RecyclerView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -63,8 +63,16 @@ class ProductActivity : AppCompatActivity() {
         val category: TextView = findViewById(R.id.product_category)
         val name: TextView = findViewById(R.id.product_name)
         val price: TextView = findViewById(R.id.product_price)
+        val barcode: TextView = findViewById(R.id.product_barcode)
         category.text = product.category
         name.text = product.name
+        if (product.barcode.isNullOrEmpty()) {
+            barcode.text = getString(R.string.barcode_unknown)
+        } else {
+            barcode.text = buildString {
+                append(getString(R.string.barcode) + " " + product.barcode)
+            }
+        }
         val pTxt = DecimalFormat("##.00").format(product.price).toString() + "€"
         price.text = pTxt
 
@@ -80,7 +88,7 @@ class ProductActivity : AppCompatActivity() {
     }
 
 
-    private fun downloadImageTask(bmImage: ImageView, url : String) {
+    private fun downloadImageTask(bmImage: ImageView, url: String) {
         val handler = Handler(Looper.getMainLooper())
         val executor = Executors.newSingleThreadExecutor()
         executor.execute {
@@ -114,6 +122,7 @@ class ProductActivity : AppCompatActivity() {
      * then pass that information to get the Product Price in that store
      * */
     private fun getStore(storeKey: String) {
+
         val call = RetrofitProductsInit(applicationContext).productService()
             .getStore(storeKey, idToken)
         call.enqueue(object : Callback<Store> {
@@ -129,7 +138,7 @@ class ProductActivity : AppCompatActivity() {
                 } else {
                     Toast.makeText(
                         applicationContext,
-                        "Ocorreu um erro",
+                        getString(R.string.error_message),
                         Toast.LENGTH_LONG
                     ).show()
                 }
@@ -164,7 +173,7 @@ class ProductActivity : AppCompatActivity() {
                 } else {
                     Toast.makeText(
                         applicationContext,
-                        "Ocorreu um erro",
+                        getString(R.string.error_message),
                         Toast.LENGTH_LONG
                     ).show()
                 }

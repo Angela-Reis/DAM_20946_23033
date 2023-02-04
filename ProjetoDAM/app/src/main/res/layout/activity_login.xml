@@ -41,7 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignEnd="@id/loginPassword"
-            android:contentDescription="@string/ver_password"
+            android:contentDescription="@string/see_password"
             android:minHeight="48dp"
             android:src="@drawable/ic_baseline_eye" />
 
@@ -53,12 +53,12 @@
         android:ems="15"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/entrar" />
+        android:text="@string/login" />
 
     <Button
         android:id="@+id/buttonRegister"
         android:ems="15"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/criar_conta" />
+        android:text="@string/create_account" />
 </LinearLayout>

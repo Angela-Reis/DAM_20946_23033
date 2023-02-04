@@ -6,6 +6,8 @@
     android:layout_margin="8dp"
     android:orientation="vertical">
 
+    <!-- This layout is used by the recycler View of the activity activity_product-->
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

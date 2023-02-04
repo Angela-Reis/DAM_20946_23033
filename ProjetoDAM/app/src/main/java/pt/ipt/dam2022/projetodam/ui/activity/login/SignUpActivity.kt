@@ -45,12 +45,12 @@ class SignUpActivity : AppCompatActivity() {
             val email = emailTxt.text.toString()
             val pass = passwordTxt.text.toString()
             if(!isValidPassword(passwordTxt.text.toString())){
-                passwordTxt.error = "Password tem de ter 6 caracteres e 1 maiúsculo"
+                passwordTxt.error = getString(R.string.password_error)
             }
             else if (pass != repeatPasswordTxt.text.toString()) {
-                repeatPasswordTxt.error = "Passwords tem de ser iguais"
+                repeatPasswordTxt.error = getString(R.string.password_error_equal)
             }else if(!checkForEmail(email)){
-                emailTxt.error = "Coloque um email válido"
+                emailTxt.error = getString(R.string.email_error)
             }else{
                 signUpUser(email, pass)
             }
@@ -132,7 +132,7 @@ class SignUpActivity : AppCompatActivity() {
 
             override fun onFailure(call: Call<SignUpResponse>, t: Throwable) {
                 t.message?.let { Log.e("Something went wrong ", it) }
-                Toast.makeText(applicationContext, "Aconteceu um erro", Toast.LENGTH_LONG).show()
+                Toast.makeText(applicationContext, getString(R.string.error_message), Toast.LENGTH_LONG).show()
             }
         })
     }

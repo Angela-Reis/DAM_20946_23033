@@ -78,9 +78,9 @@ class ChangePassFragment : Fragment() {
 
             val newPass = passwordTxt.text.toString()
             if (!isValidPassword(passwordTxt.text.toString())) {
-                passwordTxt.error = "Password tem de ter 6 caracteres e 1 maiúsculo"
+                passwordTxt.error = getString(R.string.password_error)
             } else if (newPass != passwordTxtRep.text.toString()) {
-                passwordTxtRep.error = "Passwords tem de ser iguais"
+                passwordTxtRep.error = getString(R.string.password_error_equal)
             } else {
                 if (sharedPreference != null) {
                     //it first test if the user put the right password
@@ -137,7 +137,7 @@ class ChangePassFragment : Fragment() {
                     try {
                         Toast.makeText(
                             requireContext(),
-                            "Aconteceu um erro a verificar password antiga",
+                            getString(R.string.error_message),
                             Toast.LENGTH_LONG
                         ).show()
                     } catch (e: Exception) {
@@ -150,7 +150,7 @@ class ChangePassFragment : Fragment() {
                 t.message?.let { Log.e("Something went wrong ", it) }
                 Toast.makeText(
                     requireContext(),
-                    "Ocorreu um erro a alterar a password",
+                    getString(R.string.error_message),
                     Toast.LENGTH_LONG
                 ).show()
             }
@@ -187,7 +187,7 @@ class ChangePassFragment : Fragment() {
                         editor.putString("refreshTokenUser", result.refreshToken)
                         editor.putString("idTokenUser", result.idToken)
                         editor.apply()
-                        Toast.makeText(requireContext(), "Password alterada", Toast.LENGTH_LONG)
+                        Toast.makeText(requireContext(), getString(R.string.password_changed), Toast.LENGTH_LONG)
                             .show()
                         val intent = Intent(requireContext(), MainActivity::class.java)
                         startActivity(intent)
@@ -197,7 +197,7 @@ class ChangePassFragment : Fragment() {
                     try {
                         Toast.makeText(
                             requireContext(),
-                            "Ocorreu um erro a alterar a password",
+                            getString(R.string.error_message),
                             Toast.LENGTH_LONG
                         ).show()
                     } catch (e: Exception) {
@@ -210,7 +210,7 @@ class ChangePassFragment : Fragment() {
                 t.message?.let { Log.e("Something went wrong ", it) }
                 Toast.makeText(
                     requireContext(),
-                    "Aconteceu um erro a alterar a password",
+                    getString(R.string.error_message),
                     Toast.LENGTH_LONG
                 ).show()
             }

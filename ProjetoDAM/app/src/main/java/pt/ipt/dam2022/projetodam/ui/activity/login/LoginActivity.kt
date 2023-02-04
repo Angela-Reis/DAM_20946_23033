@@ -43,7 +43,7 @@ class LoginActivity : AppCompatActivity() {
             val email = emailTxt.text.toString()
             val pass = passwordTxt.text.toString()
              if(!checkForEmail(email)){
-                emailTxt.error = "Coloque um email válido"
+                emailTxt.error = getString(R.string.email_error)
             }else{
                 loginUser(email, pass)
             }
@@ -98,7 +98,7 @@ class LoginActivity : AppCompatActivity() {
                     }
                 } else {
                     try {
-                        Toast.makeText(applicationContext, "Ocorreu um erro a fazer login", Toast.LENGTH_LONG).show()
+                        Toast.makeText(applicationContext, getString(R.string.error_message), Toast.LENGTH_LONG).show()
                     } catch (e: Exception) {
                         Toast.makeText(applicationContext, e.message, Toast.LENGTH_LONG).show()
                     }
@@ -107,7 +107,7 @@ class LoginActivity : AppCompatActivity() {
 
             override fun onFailure(call: Call<LoginUserResponse>, t: Throwable) {
                 t.message?.let { Log.e("Something went wrong ", it) }
-                Toast.makeText(applicationContext, "Aconteceu um erro a fazer login", Toast.LENGTH_LONG).show()
+                Toast.makeText(applicationContext, getString(R.string.error_message), Toast.LENGTH_LONG).show()
             }
         })
     }

@@ -108,7 +108,7 @@ class ProductsListAdapter(
                     URL(pr.image).openStream()
                 productImage = BitmapFactory.decodeStream(`in`)
             } catch (e: Exception) {
-                Log.e("Error", e.message!!)
+                Log.e(context.getString(R.string.error_message), e.message!!)
                 e.printStackTrace()
             }
             handler.post {
