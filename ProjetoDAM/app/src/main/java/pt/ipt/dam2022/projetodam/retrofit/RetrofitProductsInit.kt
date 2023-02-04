@@ -11,7 +11,9 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 
 
 /**
- * access to API
+ * Access to firebase REST API
+ * API Documentation can be found in
+ * https://firebase.google.com/docs/database/rest/retrieve-data
  */
 class RetrofitProductsInit(private var context: Context) {
 

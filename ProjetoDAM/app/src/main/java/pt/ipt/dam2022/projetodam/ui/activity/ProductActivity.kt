@@ -1,9 +1,14 @@
 package pt.ipt.dam2022.projetodam.ui.activity
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.MenuItem
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -19,6 +24,9 @@ import pt.ipt.dam2022.projetodam.ui.adapter.ProductPricesAdapter
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.InputStream
+import java.net.URL
+import java.util.concurrent.Executors
 
 
 class ProductActivity : AppCompatActivity() {
@@ -48,25 +56,41 @@ class ProductActivity : AppCompatActivity() {
         }
 
         product.stores?.forEach { entry ->
-            /*Toast.makeText(
-                this,
-                "PRODUCT KEY =  $productKey STORE KEY= ${entry.key}",
-                Toast.LENGTH_LONG
-            ).show()*/
             getStore(entry.key)
-
-            // var allStorePrices: Map<String keyStore, >
-            // getStorePrice(entry.key, productKey)
         }
-        /*showListStores();*/
         val category: TextView = findViewById(R.id.product_category)
         val name: TextView = findViewById(R.id.product_name)
         val price: TextView = findViewById(R.id.product_price)
         category.text = product.category
         name.text = product.name
-        price.text = product.price.toString()
+        val priceTxt = product.price.toString() + " €"
+        price.text = priceTxt
+
+        product.image?.let { downloadImageTask(findViewById(R.id.imageView2), it) }
 
     }
+
+
+    private fun downloadImageTask(bmImage: ImageView, url : String) {
+        val handler = Handler(Looper.getMainLooper())
+        val executor = Executors.newSingleThreadExecutor()
+        executor.execute {
+            var productImage: Bitmap? = null
+            try {
+                val `in`: InputStream =
+                    URL(url).openStream()
+                productImage = BitmapFactory.decodeStream(`in`)
+            } catch (e: Exception) {
+                Log.e("Error", e.message!!)
+                e.printStackTrace()
+            }
+            handler.post {
+                bmImage.setImageBitmap(productImage)
+            }
+        }
+
+    }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId

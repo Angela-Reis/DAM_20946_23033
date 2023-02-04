@@ -294,7 +294,7 @@ class ProductsFragment : Fragment(), MenuProvider {
     /**
      * replace the prouduct Map in the recyclerView with a sorted version, depending on which option is selected
      */
-    fun orderProducts() {
+    private fun orderProducts() {
         //Sort by the selected option
         when (selectedOrder) {
             0 -> tempList =

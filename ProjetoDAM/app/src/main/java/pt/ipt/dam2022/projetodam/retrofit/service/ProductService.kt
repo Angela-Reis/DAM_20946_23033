@@ -13,21 +13,23 @@ import retrofit2.http.*
  */
 interface ProductService {
 
+    //API Documentation can be found in https://firebase.google.com/docs/database/rest/retrieve-data
+
     /*
      * get a list with all Products
      */
     @GET("/product.json")
-    fun listAllProducts(@Query("auth") authToken : String): Call<Map<String, Product>>
+    fun listAllProducts(@Query("auth") authToken: String): Call<Map<String, Product>>
 
 
     @GET("/store/{store}.json")
-    fun getStore(@Path("store") storeKey: String, @Query("auth") authToken : String): Call<Store>
+    fun getStore(@Path("store") storeKey: String, @Query("auth") authToken: String): Call<Store>
 
     /*
      * get a list with all Stores
      */
     @GET("/store.json")
-    fun listAllStores(@Query("auth") authToken : String): Call<Map<String, Store>>
+    fun listAllStores(@Query("auth") authToken: String): Call<Map<String, Store>>
 
 
     /*
@@ -35,7 +37,9 @@ interface ProductService {
      */
     @GET("/store_products/{store}/{product}.json")
     fun getProductPriceFromStore(
-        @Path("store") storeKey: String, @Path("product") productKey: String, @Query("auth") authToken : String
+        @Path("store") storeKey: String,
+        @Path("product") productKey: String,
+        @Query("auth") authToken: String
     ): Call<StorePrice>
 
 }

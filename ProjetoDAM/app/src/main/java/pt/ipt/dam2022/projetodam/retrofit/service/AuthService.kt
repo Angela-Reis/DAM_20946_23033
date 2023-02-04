@@ -16,7 +16,7 @@ import retrofit2.http.POST
  */
 interface AuthService {
 
-    //https://firebase.google.com/docs/reference/rest/auth
+    //API Documentation can be found in https://firebase.google.com/docs/reference/rest/auth
     /*
      * signup a new user to the app
      */

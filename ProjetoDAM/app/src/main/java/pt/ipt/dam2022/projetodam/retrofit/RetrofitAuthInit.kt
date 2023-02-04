@@ -7,6 +7,11 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
+/**
+ * access Firebase Auth REST API
+ * API Documentation can be found in
+ * https://firebase.google.com/docs/reference/rest/auth
+ */
 class RetrofitAuthInit {
     //'url' to access the REST API of the Firebase Auth REST API
     private val host = "https://identitytoolkit.googleapis.com/v1/"
