@@ -1,10 +1,15 @@
 package pt.ipt.dam2022.projetodam.ui.activity.login
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.text.method.PasswordTransformationMethod
 import android.util.Log
+import android.view.MenuItem
+import android.view.MotionEvent
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.util.PatternsCompat
@@ -23,15 +28,20 @@ class SignUpActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
 
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // get reference to button
-        val btnRegister = findViewById<Button>(R.id.buttonSignUp)
+        val btnSignUp = findViewById<Button>(R.id.buttonSignUp)
         val emailTxt = findViewById<EditText>(R.id.txtEmail)
         val passwordTxt = findViewById<EditText>(R.id.txtPassword)
         val repeatPasswordTxt = findViewById<EditText>(R.id.txtRepeatPassword)
+        val btnVerPass = findViewById<ImageButton>(R.id.btnSeePass)
+        val btnVerRepPass = findViewById<ImageButton>(R.id.btnSeeRepPass)
+        seePassword(passwordTxt, btnVerPass)
+        seePassword(repeatPasswordTxt, btnVerRepPass)
 
         // set on-click listener
-        btnRegister.setOnClickListener {
+        btnSignUp.setOnClickListener {
             val email = emailTxt.text.toString()
             val pass = passwordTxt.text.toString()
             if(!isValidPassword(passwordTxt.text.toString())){
@@ -47,8 +57,20 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
+
+        if (id == android.R.id.home) {
+            finish()
+        }
+        return false
+    }
+
+    /**
+     * Verify if password is valid, longer than 6 and with an Upper Case letter
+     */
     private fun isValidPassword(password: String): Boolean {
-        if (password.length < 8) return false
+        if (password.length < 6) return false
         if (password.filter { it.isDigit() }.firstOrNull() == null) return false
         if (password.filter { it.isLetter() }.filter { it.isUpperCase() }.firstOrNull() == null) return false
         return true
@@ -113,5 +135,22 @@ class SignUpActivity : AppCompatActivity() {
                 Toast.makeText(applicationContext, "Aconteceu um erro", Toast.LENGTH_LONG).show()
             }
         })
+    }
+
+
+    /**
+     * Show password in textField when Image Button is pressed and hides password when button is released
+     */
+    @SuppressLint("ClickableViewAccessibility")
+    fun seePassword(textField: EditText, btn:ImageButton) {
+
+        btn.setOnTouchListener { v, event ->
+            when (event?.action) {
+                MotionEvent.ACTION_DOWN -> textField.transformationMethod = null
+                MotionEvent.ACTION_UP -> textField.transformationMethod = PasswordTransformationMethod()
+            }
+
+            v?.onTouchEvent(event) ?: true
+        }
     }
 }

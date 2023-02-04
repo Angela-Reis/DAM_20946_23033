@@ -12,9 +12,9 @@ import retrofit2.Callback
 
 
 /*
- * If an retrofit request receives a 401, unauthoried
+ * If an retrofit request receives a 401, unauthorized
  * it triggers this class that asks the server for an new token
- * to use in the queries
+ * to use in the queries, in the auth
  */
 class RefreshAuth(private var context: Context) : Authenticator {
 

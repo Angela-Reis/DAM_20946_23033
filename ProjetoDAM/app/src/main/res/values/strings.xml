@@ -13,4 +13,21 @@
     <string name="criar_conta">Criar Conta</string>
     <string name="sair">Sair</string>
     <string name="repetir_password">Repetir password</string>
+    <string name="pesquisar">Pesquisar</string>
+    <string name="definicoes">Definições</string>
+    <string name="inicio">Início</string>
+    <string name="sobre_a_app">Sobre a App</string>
+    <string name="alterar_password">Alterar Password</string>
+    <string name="aberto">Menu Aberto</string>
+    <string name="fechado">Menu Fechado</string>
+    <string name="informacao">Informação</string>
+    <string name="contactos">Contactos</string>
+    <string name="lojas">Lojas</string>
+    <string name="categorias">Categorias</string>
+    <string name="ver_password">Ver password</string>
+    <string name="ver_password_repetida">Ver Password Repetida</string>
+    <string name="ordenar">Ordenar</string>
+    <string name="repetir_nova_password">Repetir Nova Password</string>
+    <string name="nova_password">Nova Password</string>
+    <string name="leitor_de_codigo_de_barras">Leitor de código de barras</string>
 </resources>

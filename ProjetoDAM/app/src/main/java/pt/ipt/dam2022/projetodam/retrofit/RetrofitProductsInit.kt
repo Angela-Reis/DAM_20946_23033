@@ -7,11 +7,12 @@ import okhttp3.OkHttpClient
 import pt.ipt.dam2022.projetodam.retrofit.service.ProductService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.scalars.ScalarsConverterFactory
 
 
 /**
- * access to API
+ * Access to firebase REST API
+ * API Documentation can be found in
+ * https://firebase.google.com/docs/database/rest/retrieve-data
  */
 class RetrofitProductsInit(private var context: Context) {
 
@@ -28,7 +29,6 @@ class RetrofitProductsInit(private var context: Context) {
     private val retrofit = Retrofit.Builder()
         .baseUrl(host)
         .addConverterFactory(GsonConverterFactory.create(gson))
-        .addConverterFactory(ScalarsConverterFactory.create())
         .client(client)
         .build()
 

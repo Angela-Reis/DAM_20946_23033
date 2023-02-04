@@ -1,5 +1,6 @@
 package pt.ipt.dam2022.projetodam.retrofit.service
 
+import pt.ipt.dam2022.projetodam.model.auth.ChangePassResponse
 import pt.ipt.dam2022.projetodam.model.auth.RefreshTokenResponse
 import pt.ipt.dam2022.projetodam.model.auth.LoginUserResponse
 import pt.ipt.dam2022.projetodam.model.auth.SignUpResponse
@@ -15,6 +16,7 @@ import retrofit2.http.POST
  */
 interface AuthService {
 
+    //API Documentation can be found in https://firebase.google.com/docs/reference/rest/auth
     /*
      * signup a new user to the app
      */
@@ -39,6 +41,15 @@ interface AuthService {
     fun refreshToken(
         @Field("refresh_token") refreshToken: String?,
     ): Call<RefreshTokenResponse>
+
+
+    @FormUrlEncoded
+    @POST("./accounts:update?key=AIzaSyBcGnZpZRKNtzHLLHgfqj1jMns8G2x_uPQ&grant_type=refresh_token")
+    fun changePassword(
+        @Field("idToken") idToken: String?,
+        @Field("password") password: String?,
+        @Field("returnSecureToken") returnSecureToken: Boolean?,
+    ): Call<ChangePassResponse>
 
 
 }

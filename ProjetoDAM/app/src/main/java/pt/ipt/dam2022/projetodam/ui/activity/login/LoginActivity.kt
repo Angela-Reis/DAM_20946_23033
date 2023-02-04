@@ -1,17 +1,19 @@
 package pt.ipt.dam2022.projetodam.ui.activity.login
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.method.PasswordTransformationMethod
 import android.util.Log
+import android.view.MotionEvent
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.core.util.PatternsCompat
-import org.json.JSONObject
 import pt.ipt.dam2022.projetodam.R
 import pt.ipt.dam2022.projetodam.model.auth.LoginUserResponse
-import pt.ipt.dam2022.projetodam.model.auth.SignUpResponse
 import pt.ipt.dam2022.projetodam.retrofit.RetrofitAuthInit
 import pt.ipt.dam2022.projetodam.ui.activity.MainActivity
 import retrofit2.Call
@@ -46,6 +48,11 @@ class LoginActivity : AppCompatActivity() {
                 loginUser(email, pass)
             }
         }
+
+        val btnSeePass = findViewById<ImageButton>(R.id.btnSeePass)
+
+        //function that sets onTouchListener in order to show password
+        seePassword(passwordTxt, btnSeePass)
     }
 
     private fun checkForEmail(email: String): Boolean {
@@ -56,18 +63,18 @@ class LoginActivity : AppCompatActivity() {
     }
 
     /**
-     * access api with the call specified in registerUser
+     * access api with the call specified in loginUser
      */
     private fun loginUser(email: String, password: String) {
         val call = RetrofitAuthInit().authService().loginUser(email, password, true)
-        processRegister(call)
+        processLogin(call)
     }
 
 
     /**
      * add the User to sharedPreference to keep token when the app is shut down
      */
-    private fun processRegister(call: Call<LoginUserResponse>) {
+    private fun processLogin(call: Call<LoginUserResponse>) {
         // use data read
         call.enqueue(object : Callback<LoginUserResponse> {
             override fun onResponse(
@@ -103,5 +110,22 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(applicationContext, "Aconteceu um erro a fazer login", Toast.LENGTH_LONG).show()
             }
         })
+    }
+
+
+    /**
+     * Show password in textField when Image Button is pressed and hides password when button is released
+     */
+    @SuppressLint("ClickableViewAccessibility")
+    fun seePassword(textField: EditText, btn:ImageButton) {
+
+        btn.setOnTouchListener { v, event ->
+            when (event?.action) {
+                MotionEvent.ACTION_DOWN -> textField.transformationMethod = null
+                MotionEvent.ACTION_UP -> textField.transformationMethod = PasswordTransformationMethod()
+            }
+
+            v?.onTouchEvent(event) ?: true
+        }
     }
 }

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.fragments.ProductsFragment"
+    android:id="@+id/fragmentProduct">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="?colorPrimary"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/selectCategory"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:drawable/editbox_background"
+                android:backgroundTint="?android:colorAccent"
+                android:clickable="true"
+                android:drawablePadding="10dp"
+                android:focusable="true"
+                android:hint="@string/categorias"
+                android:minHeight="48dp"
+                android:padding="10dp"
+                app:drawableEndCompat="@drawable/ic_baseline_arrow_drop_down_24" />
+
+            <TextView
+                android:id="@+id/selectStore"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:drawable/editbox_background"
+                android:backgroundTint="?android:colorAccent"
+                android:clickable="true"
+                android:drawablePadding="10dp"
+                android:focusable="true"
+                android:hint="@string/lojas"
+                android:minHeight="48dp"
+                android:padding="10dp"
+                app:drawableEndCompat="@drawable/ic_baseline_arrow_drop_down_24" />
+
+            <TextView
+                android:id="@+id/selectOrder"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:drawable/editbox_background"
+                android:backgroundTint="?android:colorAccent"
+                android:clickable="true"
+                android:drawablePadding="10dp"
+                android:focusable="true"
+                android:hint="@string/ordenar"
+                android:minHeight="48dp"
+                android:padding="10dp"
+                app:drawableEndCompat="@drawable/ic_baseline_arrow_drop_down_24" />
+
+
+        </LinearLayout>
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/pullToRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/productList_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="10dp"/>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    </LinearLayout>
+</FrameLayout>
