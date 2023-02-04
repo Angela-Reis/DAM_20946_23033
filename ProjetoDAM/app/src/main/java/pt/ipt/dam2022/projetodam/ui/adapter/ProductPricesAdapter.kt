@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import pt.ipt.dam2022.projetodam.R
 import pt.ipt.dam2022.projetodam.model.StorePrice
+import java.text.DecimalFormat
 
 
 class ProductPricesAdapter(
@@ -21,7 +22,8 @@ class ProductPricesAdapter(
             val price: TextView = itemView.findViewById(R.id.price_store)
 
             name.text = product.storeName
-            price.text = product.price.toString()
+            val pTxt = DecimalFormat("##.00").format(product.price).toString() + "€"
+            price.text = pTxt
         }
 
     }

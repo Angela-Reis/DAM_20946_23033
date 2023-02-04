@@ -12,7 +12,8 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/black</item>
         <!-- Customize your theme here. -->
-        <item name="android:colorAccent">#FFF</item>
+        <item name="android:colorAccent">#DDD</item>
         <item name="actionBarStyle">@style/Widget.MaterialComponents.ActionBar.Primary</item>
+        <item name="android:fontFamily">sans-serif-condensed</item>
     </style>
 </resources>

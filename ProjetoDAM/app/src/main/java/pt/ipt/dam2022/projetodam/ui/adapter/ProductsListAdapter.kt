@@ -19,6 +19,7 @@ import pt.ipt.dam2022.projetodam.model.Product
 import pt.ipt.dam2022.projetodam.ui.activity.ProductActivity
 import java.io.InputStream
 import java.net.URL
+import java.text.DecimalFormat
 import java.util.concurrent.Executors
 
 
@@ -51,7 +52,8 @@ class ProductsListAdapter(
 
             category.text = product.category
             name.text = product.name
-            price.text = product.price.toString()
+            val pTxt = DecimalFormat("##.00").format(product.price).toString() + "€"
+            price.text = pTxt
 
             itemView.setOnClickListener {
                 val intent = Intent(itemView.context, ProductActivity::class.java)

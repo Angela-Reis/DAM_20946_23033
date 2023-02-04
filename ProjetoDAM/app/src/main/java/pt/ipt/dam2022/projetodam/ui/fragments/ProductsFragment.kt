@@ -1,5 +1,6 @@
 package pt.ipt.dam2022.projetodam.ui.fragments
 
+import android.app.AlertDialog
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
@@ -8,6 +9,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
@@ -179,6 +181,21 @@ class ProductsFragment : Fragment(), MenuProvider {
         })
     }
 
+    /**
+     * Set color of button of dialog
+     */
+    fun setDialogButtonColor(dialog: AlertDialog){
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(
+            ContextCompat.getColor(
+                requireContext(), R.color.teal_200
+            )
+        )
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(
+            ContextCompat.getColor(
+                requireContext(), R.color.teal_200
+            )
+        )
+    }
 
     /**
      * Add options pop up to filter products when clicking on the textView for stores and categories
@@ -211,17 +228,19 @@ class ProductsFragment : Fragment(), MenuProvider {
                 dialogInterface.dismiss()
             }
 
-            builderDialog.setNeutralButton("Cancel") { dialog, which ->
+            builderDialog.setNeutralButton("Cancelar") { dialog, which ->
                 dialog.cancel()
             }
 
-            val alert = builderDialog.create()
-            alert.show()
+            val dialog = builderDialog.create()
+            dialog.show()
+            setDialogButtonColor(dialog)
+            //set color of the dialog button
+
         }
 
 
     }
-
 
     /**
     + Build a clickListener for a TextView that opens a dialog with multi selection
@@ -253,8 +272,10 @@ class ProductsFragment : Fragment(), MenuProvider {
                 filterData()
             }
 
-            val alert = builderDialog.create()
-            alert.show()
+            val dialog = builderDialog.create()
+            dialog.show()
+            setDialogButtonColor(dialog)
+
         }
 
     }

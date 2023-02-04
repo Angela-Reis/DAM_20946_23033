@@ -15,27 +15,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-        <EditText
-            android:id="@+id/txtOldPassword"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="25dp"
-            android:ems="15"
-            android:hint="@string/password"
-            android:importantForAutofill="no"
-            android:inputType="textPassword"
-            android:minHeight="50dp"
-            android:textColorHint="#757575" />
+            <EditText
+                android:id="@+id/txtOldPassword"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="25dp"
+                android:ems="15"
+                android:hint="@string/password"
+                android:importantForAutofill="no"
+                android:inputType="textPassword"
+                android:minHeight="50dp" />
 
 
-        <ImageButton
-            android:id="@+id/btnSeeOldPass"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignEnd="@id/txtOldPassword"
-            android:contentDescription="@string/ver_password"
-            android:minHeight="48dp"
-            android:src="@drawable/ic_baseline_eye" />
+            <ImageButton
+                android:id="@+id/btnSeeOldPass"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@id/txtOldPassword"
+                android:contentDescription="@string/ver_password"
+                android:minHeight="48dp"
+                android:src="@drawable/ic_baseline_eye" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -51,8 +50,7 @@
                 android:hint="@string/nova_password"
                 android:importantForAutofill="no"
                 android:inputType="textPassword"
-                android:minHeight="50dp"
-                android:textColorHint="#757575" />
+                android:minHeight="50dp" />
 
 
             <ImageButton
@@ -79,9 +77,7 @@
                 android:hint="@string/repetir_nova_password"
                 android:importantForAutofill="no"
                 android:inputType="textPassword"
-                android:minHeight="50dp"
-                android:textColorHint="#757575"
-                android:imeOptions="actionDone"/>
+                android:minHeight="50dp" />
 
 
             <ImageButton
@@ -97,9 +93,9 @@
 
         <Button
             android:id="@+id/buttonChangePass"
-            android:ems="15"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:ems="15"
             android:text="@string/alterar_password" />
     </LinearLayout>
 

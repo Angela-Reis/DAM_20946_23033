@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="250dp"
+    android:layout_height="wrap_content"
     android:layout_margin="5dp">
 
     <LinearLayout
@@ -21,12 +21,19 @@
                 android:id="@+id/imageProduct"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
-                android:visibility="invisible" />
+                android:visibility="invisible"
+                android:layout_gravity="center"/>
 
             <ProgressBar
                 android:id="@+id/progressBar"
-                android:layout_width="199dp"
-                android:layout_height="150dp" />
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:visibility="visible"
+                android:indeterminateTintMode="src_atop"
+                android:indeterminateTint="?attr/colorPrimary" />
         </FrameLayout>
 
         <TextView

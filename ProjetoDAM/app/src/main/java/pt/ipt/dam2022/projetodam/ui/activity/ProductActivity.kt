@@ -26,6 +26,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.InputStream
 import java.net.URL
+import java.text.DecimalFormat
 import java.util.concurrent.Executors
 
 
@@ -63,8 +64,8 @@ class ProductActivity : AppCompatActivity() {
         val price: TextView = findViewById(R.id.product_price)
         category.text = product.category
         name.text = product.name
-        val priceTxt = product.price.toString() + " €"
-        price.text = priceTxt
+        val pTxt = DecimalFormat("##.00").format(product.price).toString() + "€"
+        price.text = pTxt
 
         product.image?.let { downloadImageTask(findViewById(R.id.imageView2), it) }
 
