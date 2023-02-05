@@ -24,7 +24,7 @@
     <string name="repeat_new_password">Repeat New Password</string>
     <string name="new_password">New Password</string>
     <string name="barcode_reader">Barcode Reader</string>
-    <string name="password_error">Password has to have 6 characters e 1 upperCase</string>
+    <string name="password_error">Password has to have 6 characters, 1 upperCase and 1 number</string>
     <string name="password_error_equal">Passwords have to be the same</string>
     <string name="email_error">Input valid email</string>
     <string name="error_message">An error occurred</string>

@@ -28,7 +28,7 @@ not the default one-->
     <string name="repeat_new_password">Repetir Nova Password</string>
     <string name="new_password">Nova Password</string>
     <string name="barcode_reader">Leitor código de barras</string>
-    <string name="password_error">Password tem de ter 6 caracteres e 1 maiúsculo</string>
+    <string name="password_error">Password tem de ter 6 caracteres, 1 maiúsculo e 1 número</string>
     <string name="password_error_equal">Passwords tem de ser iguais</string>
     <string name="email_error">Coloque um email válido</string>
     <string name="error_message">Ocorreu um erro</string>
