@@ -45,4 +45,17 @@
     <string name="barcode">Código de barras</string>
     <string name="account">Cuenta</string>
     <string name="language">Lengua</string>
+    <string name="application_developed">Aplicación desarrollada bajo:</string>
+    <string name="software_engineering_course">Curso de Ingeniería de Software</string>
+    <string name="subject_dam">Curso de Desarrollo de Aplicaciones Móviles</string>
+    <string name="school_year">Año escolar 2022/2023</string>
+    <string name="by_students">Por estudiantes:</string>
+    <string name="angela">Ángela Reis nº20946</string>
+    <string name="miguel">Miguel Modesto nº23033</string>
+    <string name="used_libraries">Bibliotecas utilizadas:</string>
+    <string name="retrofit2">Retrofit2</string>
+    <string name="zxing_android_embedded">Zxing-android-embedded</string>
+    <string name="credentials">Credenciales para acceder a la aplicación:</string>
+    <string name="email_credential">pricer.test.app@gmail.com</string>
+    <string name="password_credential">Precio2023</string>
 </resources>

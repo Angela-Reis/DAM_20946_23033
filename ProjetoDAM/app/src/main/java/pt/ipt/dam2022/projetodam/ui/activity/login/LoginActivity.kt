@@ -1,17 +1,19 @@
 package pt.ipt.dam2022.projetodam.ui.activity.login
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.method.PasswordTransformationMethod
 import android.util.Log
+import android.view.Menu
 import android.view.MotionEvent
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.util.PatternsCompat
 import pt.ipt.dam2022.projetodam.LanguageUtil
 import pt.ipt.dam2022.projetodam.R
@@ -21,6 +23,7 @@ import pt.ipt.dam2022.projetodam.ui.activity.MainActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+
 
 class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,9 +47,9 @@ class LoginActivity : AppCompatActivity() {
         btnLogin.setOnClickListener {
             val email = emailTxt.text.toString()
             val pass = passwordTxt.text.toString()
-             if(!checkForEmail(email)){
+            if (!checkForEmail(email)) {
                 emailTxt.error = getString(R.string.email_error)
-            }else{
+            } else {
                 loginUser(email, pass)
             }
         }
@@ -100,7 +103,11 @@ class LoginActivity : AppCompatActivity() {
                     }
                 } else {
                     try {
-                        Toast.makeText(applicationContext, getString(R.string.error_message), Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            applicationContext,
+                            getString(R.string.error_message),
+                            Toast.LENGTH_LONG
+                        ).show()
                     } catch (e: Exception) {
                         Toast.makeText(applicationContext, e.message, Toast.LENGTH_LONG).show()
                     }
@@ -109,7 +116,11 @@ class LoginActivity : AppCompatActivity() {
 
             override fun onFailure(call: Call<LoginUserResponse>, t: Throwable) {
                 t.message?.let { Log.e("Something went wrong ", it) }
-                Toast.makeText(applicationContext, getString(R.string.error_message), Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    applicationContext,
+                    getString(R.string.error_message),
+                    Toast.LENGTH_LONG
+                ).show()
             }
         })
     }
@@ -119,12 +130,13 @@ class LoginActivity : AppCompatActivity() {
      * Show password in textField when Image Button is pressed and hides password when button is released
      */
     @SuppressLint("ClickableViewAccessibility")
-    fun seePassword(textField: EditText, btn:ImageButton) {
+    fun seePassword(textField: EditText, btn: ImageButton) {
 
         btn.setOnTouchListener { v, event ->
             when (event?.action) {
                 MotionEvent.ACTION_DOWN -> textField.transformationMethod = null
-                MotionEvent.ACTION_UP -> textField.transformationMethod = PasswordTransformationMethod()
+                MotionEvent.ACTION_UP -> textField.transformationMethod =
+                    PasswordTransformationMethod()
             }
 
             v?.onTouchEvent(event) ?: true
@@ -133,5 +145,27 @@ class LoginActivity : AppCompatActivity() {
 
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(LanguageUtil.updateConfigLang(newBase))
+    }
+
+
+    /**
+     * Initialize the menu, adding about Page on Dialog
+     */
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.login, menu)
+        val item = menu?.findItem(R.id.about)
+        item?.setOnMenuItemClickListener {
+            val builder = AlertDialog.Builder(this)
+            val inflater = this.layoutInflater
+            builder.setView(inflater.inflate(R.layout.fragment_about_app, null))
+            builder.create()
+            builder.setPositiveButton("OK") { dialog, id ->
+                dialog.dismiss() // dismiss AlertDialog
+            }
+            builder.show()
+
+            true
+        }
+        return super.onCreateOptionsMenu(menu)
     }
 }

@@ -54,7 +54,66 @@ class ProductsFragment : Fragment(), MenuProvider {
     var selectedOrder: Int = 0
     private lateinit var orderOptions: Array<String>
     private var dialog: AlertDialog? = null
+    // Register the launcher and result handler of the bar code Scanner
+    private val barcodeLauncher = registerForActivityResult(
+        ScanContract()
+    ) { result: ScanIntentResult ->
+        if (result.contents == null) {
+            Toast.makeText(context, getString(R.string.cancelled), Toast.LENGTH_LONG).show()
+        } else {
+            //Process the bar code to check if product exists
+            checkProductExistence(result.contents)
+            // adding ALERT Dialog builder object and passing activity as parameter
+            val builder = AlertDialog.Builder(activity)
+            val inflater = requireActivity().layoutInflater
+            //show layout in loading.xml
+            builder.setView(inflater.inflate(R.layout.loading, null))
+            builder.setCancelable(false)
 
+            dialog = builder.create()
+            (dialog as AlertDialog).show()
+        }
+    }
+
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_products, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        orderOptions = arrayOf(
+            getString(R.string.ascending_price), getString(
+                R.string.descending_price
+            )
+        )
+        val sharedPreference =
+            activity?.getSharedPreferences("USER", AppCompatActivity.MODE_PRIVATE)
+        if (sharedPreference != null) {
+            idToken = sharedPreference.getString("idTokenUser", null).toString()
+        }
+        recyclerView = view.findViewById(R.id.productList_view)
+        selectStore = view.findViewById(R.id.selectStore)
+        selectCategory = view.findViewById(R.id.selectCategory)
+        selectOrder = view.findViewById(R.id.selectOrder)
+
+        listProducts()
+
+        //add refresh products when swiping down
+        val pullToRefresh: SwipeRefreshLayout = view.findViewById(R.id.pullToRefresh)
+        pullToRefresh.setOnRefreshListener {
+            listProducts() // your code
+            pullToRefresh.isRefreshing = false
+        }
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
+        super.onViewCreated(view, savedInstanceState)
+    }
 
 
     private fun checkProductExistence(barcode: String) {
@@ -131,46 +190,6 @@ class ProductsFragment : Fragment(), MenuProvider {
             builder.show()
 
         }
-    }
-
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_products, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
-        orderOptions = arrayOf(
-            getString(R.string.ascending_price), getString(
-                R.string.descending_price
-            )
-        )
-        val sharedPreference =
-            activity?.getSharedPreferences("USER", AppCompatActivity.MODE_PRIVATE)
-        if (sharedPreference != null) {
-            idToken = sharedPreference.getString("idTokenUser", null).toString()
-        }
-        recyclerView = view.findViewById(R.id.productList_view)
-        selectStore = view.findViewById(R.id.selectStore)
-        selectCategory = view.findViewById(R.id.selectCategory)
-        selectOrder = view.findViewById(R.id.selectOrder)
-
-        listProducts()
-
-        //add refresh products when swiping down
-        val pullToRefresh: SwipeRefreshLayout = view.findViewById(R.id.pullToRefresh)
-        pullToRefresh.setOnRefreshListener {
-            listProducts() // your code
-            pullToRefresh.isRefreshing = false
-        }
-        val menuHost: MenuHost = requireActivity()
-        menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
-
-        super.onViewCreated(view, savedInstanceState)
     }
 
 
@@ -500,25 +519,6 @@ class ProductsFragment : Fragment(), MenuProvider {
             // and is referenced in Manifest as having screenRotation fullSensor
             options.captureActivity = CaptureBarCodeAct::class.java
             options.setBeepEnabled(false)
-            // Register the launcher and result handler of the bar code Scanner
-            val barcodeLauncher = registerForActivityResult(
-                ScanContract()
-            ) { result: ScanIntentResult ->
-                if (result.contents == null) {
-                    Toast.makeText(context, getString(R.string.cancelled), Toast.LENGTH_LONG).show()
-                } else {
-                    //Process the bar code to check if product exists
-                    checkProductExistence(result.contents)
-                    // adding ALERT Dialog builder object and passing activity as parameter
-                    val builder = AlertDialog.Builder(activity)
-                    val inflater = requireActivity().layoutInflater
-                    builder.setView(inflater.inflate(R.layout.loading, null))
-                    builder.setCancelable(false)
-
-                    dialog = builder.create()
-                    (dialog as AlertDialog).show()
-                }
-            }
             //Launch the barcode Scanner
             barcodeLauncher.launch(options)
             true

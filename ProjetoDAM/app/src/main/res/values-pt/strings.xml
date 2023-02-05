@@ -49,4 +49,17 @@ not the default one-->
     <string name="barcode">EAN </string>
     <string name="account">Conta</string>
     <string name="language">Linguagem</string>
+    <string name="application_developed">Aplicação desenvolvida no ambito:</string>
+    <string name="software_engineering_course">Curso Engenharia de Software</string>
+    <string name="subject_dam">Displina de Desenvolvimento de Aplicações móveis</string>
+    <string name="school_year">Ano letivo 2022/2023</string>
+    <string name="by_students">Pelos alunos:</string>
+    <string name="angela">Ângela Reis nº20946</string>
+    <string name="miguel">Miguel Modesto nº23033</string>
+    <string name="used_libraries">Foram utilizadas as bibliotecas:</string>
+    <string name="retrofit2">Retrofit2</string>
+    <string name="zxing_android_embedded">Zxing-android-embedded</string>
+    <string name="credentials">Credenciais para aceder à aplicação:</string>
+    <string name="email_credential">pricer.test.app@gmail.com</string>
+    <string name="password_credential">Pricer2023</string>
 </resources>
