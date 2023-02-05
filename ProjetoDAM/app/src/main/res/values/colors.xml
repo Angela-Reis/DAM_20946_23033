@@ -11,4 +11,5 @@
     <color name="blue_2">#324A88</color>
     <color name="blue_3">#1B217C</color>
     <color name="underline">#BBB</color>
+    <color name="textHint">#757575</color>
 </resources>

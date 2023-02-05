@@ -14,6 +14,6 @@
         <!-- Customize your theme here. -->
         <item name="android:colorAccent">#DDD</item>
         <item name="actionBarStyle">@style/Widget.MaterialComponents.ActionBar.Primary</item>
-        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:fontFamily">@string/font</item>
     </style>
 </resources>
