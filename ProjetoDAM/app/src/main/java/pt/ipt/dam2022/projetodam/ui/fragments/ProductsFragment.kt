@@ -302,7 +302,7 @@ class ProductsFragment : Fragment(), MenuProvider {
     /**
      * Set color of button of dialog
      */
-    fun setDialogButtonColor(dialog: AlertDialog) {
+    private fun setDialogButtonColor(dialog: AlertDialog) {
         dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(
             ContextCompat.getColor(
                 requireContext(), R.color.teal_200
@@ -361,8 +361,8 @@ class ProductsFragment : Fragment(), MenuProvider {
 
             val dialog = builderDialog.create()
             dialog.show()
-            setDialogButtonColor(dialog)
             //set color of the dialog button
+            setDialogButtonColor(dialog)
 
         }
 

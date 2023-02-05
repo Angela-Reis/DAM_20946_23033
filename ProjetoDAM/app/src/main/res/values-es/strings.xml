@@ -57,5 +57,5 @@
     <string name="zxing_android_embedded">Zxing-android-embedded</string>
     <string name="credentials">Credenciales para acceder a la aplicación:</string>
     <string name="email_credential">pricer.test.app@gmail.com</string>
-    <string name="password_credential">Precio2023</string>
+    <string name="password_credential">Pricer2023</string>
 </resources>

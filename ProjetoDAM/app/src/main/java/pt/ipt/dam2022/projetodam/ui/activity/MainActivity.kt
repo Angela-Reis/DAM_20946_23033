@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -23,7 +24,6 @@ import pt.ipt.dam2022.projetodam.R
 import pt.ipt.dam2022.projetodam.ui.activity.login.LoginActivity
 import pt.ipt.dam2022.projetodam.ui.fragments.AboutAppFragment
 import pt.ipt.dam2022.projetodam.ui.fragments.ChangePassFragment
-import pt.ipt.dam2022.projetodam.ui.fragments.ContactFragment
 import pt.ipt.dam2022.projetodam.ui.fragments.ProductsFragment
 import java.util.*
 
@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.changePass -> changeFragment(ChangePassFragment(), it.title.toString())
                 R.id.language -> chooseLanguage()
                 R.id.about -> changeFragment(AboutAppFragment(), it.title.toString())
-                R.id.contacts -> changeFragment(ContactFragment(), it.title.toString())
+                R.id.contacts -> openEmailApp()
                 R.id.exit -> logOut()
             }
             true
@@ -117,7 +117,16 @@ class MainActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
-
+    /**
+     * Open app to send email to the pricer contact app
+     */
+    fun openEmailApp() {
+        val intent = Intent(Intent.ACTION_SENDTO)
+        intent.data = Uri.parse("mailto:")
+        intent.putExtra(Intent.EXTRA_EMAIL, arrayOf("pricer.app.contact@gmail.com"))
+        // intent.putExtra(Intent.EXTRA_SUBJECT, subject)
+        startActivity(intent)
+    }
 
     /**
      * function to set the on Click Listener in order to logOut
@@ -171,7 +180,7 @@ class MainActivity : AppCompatActivity() {
             when(i){
                 0 -> changeLanguage("pt",i)
                 1 -> changeLanguage("en",i)
-                2 -> changeLanguage("es", 1)
+                2 -> changeLanguage("es", i)
             }
             dialogInterface.dismiss()
         }
