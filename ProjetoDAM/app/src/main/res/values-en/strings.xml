@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Pricer</string>
     <string name="menu">Menu</string>
@@ -29,7 +28,6 @@
     <string name="password_error_equal">Passwords have to be the same</string>
     <string name="email_error">Input valid email</string>
     <string name="error_message">An error occurred</string>
-    <string name="error">Error</string>
     <string name="ascending_price">Ascending Price</string>
     <string name="descending_price">Descending Price</string>
     <string name="cancelled">Cancelled</string>
@@ -46,4 +44,5 @@
     <string name="barcode_unknown">Barcode Unknown</string>
     <string name="barcode">Barcode </string>
     <string name="account">Account</string>
+    <string name="language">Language</string>
 </resources>

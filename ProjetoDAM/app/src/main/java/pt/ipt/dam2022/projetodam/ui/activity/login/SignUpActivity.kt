@@ -1,6 +1,7 @@
 package pt.ipt.dam2022.projetodam.ui.activity.login
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.method.PasswordTransformationMethod
@@ -14,6 +15,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.util.PatternsCompat
 import org.json.JSONObject
+import pt.ipt.dam2022.projetodam.LanguageUtil
 import pt.ipt.dam2022.projetodam.R
 import pt.ipt.dam2022.projetodam.model.auth.SignUpResponse
 import pt.ipt.dam2022.projetodam.retrofit.RetrofitAuthInit
@@ -152,5 +154,10 @@ class SignUpActivity : AppCompatActivity() {
 
             v?.onTouchEvent(event) ?: true
         }
+    }
+
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LanguageUtil.updateConfigLang(newBase))
     }
 }

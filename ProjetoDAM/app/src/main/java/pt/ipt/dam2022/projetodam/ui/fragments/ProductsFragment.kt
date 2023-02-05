@@ -56,27 +56,6 @@ class ProductsFragment : Fragment(), MenuProvider {
     private var dialog: AlertDialog? = null
 
 
-    // Register the launcher and result handler of the bar code Scanner
-    private val barcodeLauncher = registerForActivityResult(
-        ScanContract()
-    ) { result: ScanIntentResult ->
-        if (result.contents == null) {
-            Toast.makeText(context, getString(R.string.cancelled), Toast.LENGTH_LONG).show()
-        } else {
-            //Process the bar code to check if product exists
-            checkProductExistence(result.contents)
-            // adding ALERT Dialog builder object and passing activity as parameter
-            val builder = AlertDialog.Builder(activity)
-            val inflater = requireActivity().layoutInflater
-            builder.setView(inflater.inflate(R.layout.loading, null))
-            builder.setCancelable(false)
-
-            dialog = builder.create()
-            (dialog as AlertDialog).show()
-        }
-    }
-
-
 
     private fun checkProductExistence(barcode: String) {
         val call = RetrofitProductsInit(requireContext()).productService()
@@ -510,6 +489,7 @@ class ProductsFragment : Fragment(), MenuProvider {
             }
         })
 
+        //zxing-android-embedded Barcode scanner library
         val itemScan = menu.findItem(R.id.menu_scanner)
         itemScan.setOnMenuItemClickListener {
             //Set options for barScanner
@@ -520,7 +500,26 @@ class ProductsFragment : Fragment(), MenuProvider {
             // and is referenced in Manifest as having screenRotation fullSensor
             options.captureActivity = CaptureBarCodeAct::class.java
             options.setBeepEnabled(false)
-            //Lanch the bar Scanner
+            // Register the launcher and result handler of the bar code Scanner
+            val barcodeLauncher = registerForActivityResult(
+                ScanContract()
+            ) { result: ScanIntentResult ->
+                if (result.contents == null) {
+                    Toast.makeText(context, getString(R.string.cancelled), Toast.LENGTH_LONG).show()
+                } else {
+                    //Process the bar code to check if product exists
+                    checkProductExistence(result.contents)
+                    // adding ALERT Dialog builder object and passing activity as parameter
+                    val builder = AlertDialog.Builder(activity)
+                    val inflater = requireActivity().layoutInflater
+                    builder.setView(inflater.inflate(R.layout.loading, null))
+                    builder.setCancelable(false)
+
+                    dialog = builder.create()
+                    (dialog as AlertDialog).show()
+                }
+            }
+            //Launch the barcode Scanner
             barcodeLauncher.launch(options)
             true
         }

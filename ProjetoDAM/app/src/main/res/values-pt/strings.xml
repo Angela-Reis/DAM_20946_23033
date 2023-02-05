@@ -1,5 +1,8 @@
-<resources xmlns:tools="http://schemas.android.com/tools"
-    tools:locale="pt">
+<!--This file is the same as default but it's need for
+when a user from a different language that is implemented, for exemple english or spanish
+changes language to portuguese it needs to access a file with the pt locale
+not the default one-->
+<resources>
     <string name="app_name">Pricer</string>
     <string name="menu">Menu</string>
     <string name="filter">Filter</string>

@@ -1,6 +1,8 @@
 package pt.ipt.dam2022.projetodam.ui.activity
 
 import android.Manifest
+import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -16,12 +18,14 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.navigation.NavigationView
+import pt.ipt.dam2022.projetodam.LanguageUtil
 import pt.ipt.dam2022.projetodam.R
 import pt.ipt.dam2022.projetodam.ui.activity.login.LoginActivity
 import pt.ipt.dam2022.projetodam.ui.fragments.AboutAppFragment
 import pt.ipt.dam2022.projetodam.ui.fragments.ChangePassFragment
 import pt.ipt.dam2022.projetodam.ui.fragments.ContactFragment
 import pt.ipt.dam2022.projetodam.ui.fragments.ProductsFragment
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -29,7 +33,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var idToken: String
     private lateinit var fragmentManager: FragmentManager
     private lateinit var drawerLayout: DrawerLayout
-
+    val languages : Array<String> = arrayOf("Português", "English", "Español")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,9 +77,10 @@ class MainActivity : AppCompatActivity() {
                 R.id.home -> changeFragment(
                     ProductsFragment(), resources.getString(R.string.app_name)
                 )
+                R.id.changePass -> changeFragment(ChangePassFragment(), it.title.toString())
+                R.id.language -> chooseLanguage()
                 R.id.about -> changeFragment(AboutAppFragment(), it.title.toString())
                 R.id.contacts -> changeFragment(ContactFragment(), it.title.toString())
-                R.id.changePass -> changeFragment(ChangePassFragment(), it.title.toString())
                 R.id.exit -> logOut()
             }
             true
@@ -100,6 +105,7 @@ class MainActivity : AppCompatActivity() {
         fragmentTransaction.replace(R.id.frameLayout, fragment)
         fragmentTransaction.commit()
         setTitle(title)
+        //close the menu
         drawerLayout.closeDrawers()
     }
 
@@ -146,6 +152,56 @@ class MainActivity : AppCompatActivity() {
                 this, permissionsToRequest.toArray(arrayOf<String>()), 1
             )
         }
+    }
+
+
+    /**
+     * Open the dialog with the options of languages and respond to the user selection
+     */
+    private fun chooseLanguage() {
+        val preferenceLang = getSharedPreferences("LANG", MODE_PRIVATE)
+
+        val builderDialog = AlertDialog.Builder(this)
+        builderDialog.setTitle(getString(R.string.order_by))
+        //get the language id of the current language, if there is none set 0 by default
+        var selected: Int = preferenceLang.getInt("languageID", 0);
+
+        //choose what to do depending on the user selection
+        builderDialog.setSingleChoiceItems(languages, selected) { dialogInterface, i ->
+            when(i){
+                0 -> changeLanguage("pt",i)
+                1 -> changeLanguage("en",i)
+                2 -> changeLanguage("es", 1)
+            }
+            dialogInterface.dismiss()
+        }
+
+        builderDialog.setNeutralButton(getString(R.string.cancel)) { dialog, which ->
+            dialog.cancel()
+        }
+
+        val dialog = builderDialog.create()
+        dialog.show()
+    }
+
+    /**
+     * Change the language of the app
+     */
+    private fun changeLanguage(languageCode : String, selectedId : Int){
+        //set the app language in sharedPreference "LANG" so it persists after turning off
+        val preferenceLang = getSharedPreferences("LANG", MODE_PRIVATE)
+        val editor = preferenceLang.edit()
+        editor.putString("language", languageCode)
+        editor.putInt("languageID", selectedId)
+        editor.apply()
+        //call the update resources of the class LanguageUtil to change the language
+        LanguageUtil.updateConfigLang(this)
+        //recreate activity
+        recreate()
+    }
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LanguageUtil.updateConfigLang(newBase))
     }
 
 

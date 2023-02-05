@@ -1,5 +1,6 @@
 package pt.ipt.dam2022.projetodam.ui.activity
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -14,6 +15,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import pt.ipt.dam2022.projetodam.LanguageUtil
 import pt.ipt.dam2022.projetodam.R
 import pt.ipt.dam2022.projetodam.model.Product
 import pt.ipt.dam2022.projetodam.model.Store
@@ -183,6 +185,10 @@ class ProductActivity : AppCompatActivity() {
                 t.message?.let { Log.e("Can't read data ", it) }
             }
         })
+    }
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LanguageUtil.updateConfigLang(newBase))
     }
 
 }

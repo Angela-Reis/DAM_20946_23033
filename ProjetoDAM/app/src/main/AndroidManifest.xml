@@ -3,9 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
     <!-- Permission to access to internet -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- Permission to access to internet -->
-    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Permission to access to Camera -->
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application
@@ -17,7 +16,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ProjetoDAM"
-        tools:targetApi="31">
+        tools:targetApi="31"
+        android:name="pt.ipt.dam2022.projetodam.MyApp">
+        <!-- ^ Use class that extends Application to change language-->
+
         <activity
             android:name=".ui.activity.login.SignUpActivity"
             android:exported="false">

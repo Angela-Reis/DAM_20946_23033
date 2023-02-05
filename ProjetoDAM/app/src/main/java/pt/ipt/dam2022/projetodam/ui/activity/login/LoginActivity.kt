@@ -1,6 +1,7 @@
 package pt.ipt.dam2022.projetodam.ui.activity.login
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -12,6 +13,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.core.util.PatternsCompat
+import pt.ipt.dam2022.projetodam.LanguageUtil
 import pt.ipt.dam2022.projetodam.R
 import pt.ipt.dam2022.projetodam.model.auth.LoginUserResponse
 import pt.ipt.dam2022.projetodam.retrofit.RetrofitAuthInit
@@ -127,5 +129,9 @@ class LoginActivity : AppCompatActivity() {
 
             v?.onTouchEvent(event) ?: true
         }
+    }
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LanguageUtil.updateConfigLang(newBase))
     }
 }
