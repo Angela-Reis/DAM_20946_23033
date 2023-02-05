@@ -34,7 +34,7 @@ class ProductsListAdapter(
     lateinit var images: MutableMap<Product, Bitmap?>
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bindView(product: Product, productKey: String, image:Bitmap?) {
+        fun bindView(product: Product, productKey: String, image: Bitmap?) {
             val category: TextView = itemView.findViewById(R.id.product_category)
             val name: TextView = itemView.findViewById(R.id.product_name)
             val price: TextView = itemView.findViewById(R.id.product_price)
@@ -42,10 +42,10 @@ class ProductsListAdapter(
 
             //load the image and set it in imageProduct
             //product.setImageTask(imageProduct)
-            if(image!=null){
-                var progressBar : ProgressBar = itemView.findViewById(R.id.progressBar)
+            if (image != null) {
+                val progressBar: ProgressBar = itemView.findViewById(R.id.progressBar)
                 //hide progress bar and show image
-                progressBar.visibility= View.INVISIBLE
+                progressBar.visibility = View.INVISIBLE
                 imageProduct.visibility = View.VISIBLE
                 imageProduct.setImageBitmap(image)
             }
@@ -69,8 +69,8 @@ class ProductsListAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val productKey = products.keys.toList()[position]
         val p = products[productKey]
-        if(images[p] == null){
-            setImageTask(products[products.keys.toList()[position]]  as Product, position)
+        if (images[p] == null) {
+            setImageTask(products[products.keys.toList()[position]] as Product, position)
         }
         holder.let {
             if (p != null) {
@@ -86,7 +86,7 @@ class ProductsListAdapter(
         images = mutableMapOf<Product, Bitmap?>()
             .apply {
                 for (i in 0 until products.size) {
-                    var p = (products[products.keys.toList()[i]]) as Product
+                    val p = (products[products.keys.toList()[i]]) as Product
                     this[p] = null
                 }
             }
@@ -97,7 +97,7 @@ class ProductsListAdapter(
 
     //get images in a asynchronous way and save then to the MutableMap images and alert of change
     //https://developer.android.com/guide/background/asynchronous/java-threads
-    fun setImageTask( pr : Product, i: Int) {
+    fun setImageTask(pr: Product, i: Int) {
         val handler = Handler(Looper.getMainLooper())
         val executor = Executors.newSingleThreadExecutor()
         executor.execute {

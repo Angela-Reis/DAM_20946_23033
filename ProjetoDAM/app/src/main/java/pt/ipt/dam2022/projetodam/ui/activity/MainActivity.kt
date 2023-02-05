@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var idToken: String
     private lateinit var fragmentManager: FragmentManager
     private lateinit var drawerLayout: DrawerLayout
-    val languages : Array<String> = arrayOf("Português", "English", "Español")
+    private val languages: Array<String> = arrayOf("Português", "English", "Español")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,8 +64,9 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         //Toggle that is connect to the drawerLayout
-        //tooggle decides what item it should show an arrow or the menu item
-        toggleDrawer = ActionBarDrawerToggle(this, drawerLayout, R.string.menu_open, R.string.menu_closed)
+        //toggle decides what item it should show an arrow or the menu item
+        toggleDrawer =
+            ActionBarDrawerToggle(this, drawerLayout, R.string.menu_open, R.string.menu_closed)
         drawerLayout.addDrawerListener(toggleDrawer)
 
         //Synchronize the state of the drawer toggle with the DrawerLayout
@@ -88,11 +89,13 @@ class MainActivity : AppCompatActivity() {
         //Request that have not been granted at this point
         requestPermissionsIfNecessary(
             arrayOf(
-                Manifest.permission.INTERNET, Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.CAMERA
+                Manifest.permission.INTERNET,
+                Manifest.permission.ACCESS_NETWORK_STATE,
+                Manifest.permission.CAMERA
             )
         )
 
-        if(savedInstanceState == null){
+        if (savedInstanceState == null) {
             //Change to the ProductsFragment
             changeFragment(ProductsFragment(), resources.getString(R.string.app_name))
         }
@@ -117,10 +120,11 @@ class MainActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
+
     /**
      * Open app to send email to the pricer contact app
      */
-    fun openEmailApp() {
+    private fun openEmailApp() {
         val intent = Intent(Intent.ACTION_SENDTO)
         intent.data = Uri.parse("mailto:")
         intent.putExtra(Intent.EXTRA_EMAIL, arrayOf("pricer.app.contact@gmail.com"))
@@ -173,19 +177,19 @@ class MainActivity : AppCompatActivity() {
         val builderDialog = AlertDialog.Builder(this)
         builderDialog.setTitle(getString(R.string.order_by))
         //get the language id of the current language, if there is none set 0 by default
-        var selected: Int = preferenceLang.getInt("languageID", 0);
+        val selected: Int = preferenceLang.getInt("languageID", 0)
 
         //choose what to do depending on the user selection
         builderDialog.setSingleChoiceItems(languages, selected) { dialogInterface, i ->
-            when(i){
-                0 -> changeLanguage("pt",i)
-                1 -> changeLanguage("en",i)
+            when (i) {
+                0 -> changeLanguage("pt", i)
+                1 -> changeLanguage("en", i)
                 2 -> changeLanguage("es", i)
             }
             dialogInterface.dismiss()
         }
 
-        builderDialog.setNeutralButton(getString(R.string.cancel)) { dialog, which ->
+        builderDialog.setNeutralButton(getString(R.string.cancel)) { dialog, _ ->
             dialog.cancel()
         }
 
@@ -196,7 +200,7 @@ class MainActivity : AppCompatActivity() {
     /**
      * Change the language of the app
      */
-    private fun changeLanguage(languageCode : String, selectedId : Int){
+    private fun changeLanguage(languageCode: String, selectedId: Int) {
         //set the app language in sharedPreference "LANG" so it persists after turning off
         val preferenceLang = getSharedPreferences("LANG", MODE_PRIVATE)
         val editor = preferenceLang.edit()

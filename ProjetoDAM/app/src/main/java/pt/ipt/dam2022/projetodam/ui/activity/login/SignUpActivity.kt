@@ -46,14 +46,13 @@ class SignUpActivity : AppCompatActivity() {
         btnSignUp.setOnClickListener {
             val email = emailTxt.text.toString()
             val pass = passwordTxt.text.toString()
-            if(!isValidPassword(passwordTxt.text.toString())){
+            if (!isValidPassword(passwordTxt.text.toString())) {
                 passwordTxt.error = getString(R.string.password_error)
-            }
-            else if (pass != repeatPasswordTxt.text.toString()) {
+            } else if (pass != repeatPasswordTxt.text.toString()) {
                 repeatPasswordTxt.error = getString(R.string.password_error_equal)
-            }else if(!checkForEmail(email)){
+            } else if (!checkForEmail(email)) {
                 emailTxt.error = getString(R.string.email_error)
-            }else{
+            } else {
                 signUpUser(email, pass)
             }
         }
@@ -73,8 +72,8 @@ class SignUpActivity : AppCompatActivity() {
      */
     private fun isValidPassword(password: String): Boolean {
         if (password.length < 6) return false
-        if (password.filter { it.isDigit() }.firstOrNull() == null) return false
-        if (password.filter { it.isLetter() }.filter { it.isUpperCase() }.firstOrNull() == null) return false
+        if (password.firstOrNull { it.isDigit() } == null) return false
+        if (password.filter { it.isLetter() }.firstOrNull { it.isUpperCase() } == null) return false
         return true
     }
 
@@ -84,6 +83,7 @@ class SignUpActivity : AppCompatActivity() {
         }
         return false
     }
+
     /**
      * access api with the call specified in signUpUser
      */
@@ -106,13 +106,13 @@ class SignUpActivity : AppCompatActivity() {
 
                 if (response.isSuccessful) {
                     response.body()?.let {
-                        val response: SignUpResponse = it
+                        val responseReceived: SignUpResponse = it
                         // takes the data read from API and saves it
                         val sharedPreference = getSharedPreferences("USER", MODE_PRIVATE)
                         val editor = sharedPreference.edit()
-                        editor.putString("emailUser", response.email)
-                        editor.putString("refreshTokenUser", response.refreshToken)
-                        editor.putString("idTokenUser", response.id_token)
+                        editor.putString("emailUser", responseReceived.email)
+                        editor.putString("refreshTokenUser", responseReceived.refreshToken)
+                        editor.putString("idTokenUser", responseReceived.id_token)
                         editor.apply()
                         val intent = Intent(applicationContext, MainActivity::class.java)
                         startActivity(intent)
@@ -134,7 +134,11 @@ class SignUpActivity : AppCompatActivity() {
 
             override fun onFailure(call: Call<SignUpResponse>, t: Throwable) {
                 t.message?.let { Log.e("Something went wrong ", it) }
-                Toast.makeText(applicationContext, getString(R.string.error_message), Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    applicationContext,
+                    getString(R.string.error_message),
+                    Toast.LENGTH_LONG
+                ).show()
             }
         })
     }
@@ -144,12 +148,13 @@ class SignUpActivity : AppCompatActivity() {
      * Show password in textField when Image Button is pressed and hides password when button is released
      */
     @SuppressLint("ClickableViewAccessibility")
-    fun seePassword(textField: EditText, btn:ImageButton) {
+    fun seePassword(textField: EditText, btn: ImageButton) {
 
         btn.setOnTouchListener { v, event ->
             when (event?.action) {
                 MotionEvent.ACTION_DOWN -> textField.transformationMethod = null
-                MotionEvent.ACTION_UP -> textField.transformationMethod = PasswordTransformationMethod()
+                MotionEvent.ACTION_UP -> textField.transformationMethod =
+                    PasswordTransformationMethod()
             }
 
             v?.onTouchEvent(event) ?: true

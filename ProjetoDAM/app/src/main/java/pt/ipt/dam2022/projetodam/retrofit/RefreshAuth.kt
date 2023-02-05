@@ -1,14 +1,9 @@
 package pt.ipt.dam2022.projetodam.retrofit
 
-import android.R.attr.host
 import android.content.Context
-import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import okhttp3.*
 import pt.ipt.dam2022.projetodam.model.auth.RefreshTokenResponse
-import retrofit2.Call
-import retrofit2.Callback
 
 
 /*
@@ -18,12 +13,12 @@ import retrofit2.Callback
  */
 class RefreshAuth(private var context: Context) : Authenticator {
 
-    override fun authenticate(route: Route?, response: Response): Request? {
+    override fun authenticate(route: Route, response: Response): Request? {
         val sharedPreference = context.getSharedPreferences("USER", AppCompatActivity.MODE_PRIVATE)
-        var requestNew = response.request()
+        val request = response.request()
 
 
-        val refresh : String? = sharedPreference.getString("refreshTokenUser", null)
+        val refresh: String = sharedPreference.getString("refreshTokenUser", null)
             ?: return response.request()
 
         //exchange refresh token with a ID token
@@ -40,13 +35,16 @@ class RefreshAuth(private var context: Context) : Authenticator {
             editor.apply()
 
             //edit the request with the new token
-            var newUrl: String? =
-                newTokens.id_token?.let { requestNew.url().toString().replaceAfter("auth=", it) }
+            val newUrl: String? =
+                newTokens.id_token?.let { request.url().toString().replaceAfter("auth=", it) }
 
-           return requestNew.newBuilder()
-                .url(newUrl)
-                .build()
+
+            return newUrl?.let {
+                request.newBuilder()
+                    .url(it)
+                    .build()
+            }
         }
-        return requestNew.newBuilder().build();
+        return request.newBuilder().build()
     }
 }

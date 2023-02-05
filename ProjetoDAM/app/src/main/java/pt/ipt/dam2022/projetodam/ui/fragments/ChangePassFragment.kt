@@ -39,8 +39,6 @@ class ChangePassFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_change_pass, container, false)
     }
@@ -71,9 +69,9 @@ class ChangePassFragment : Fragment() {
         val buttonChangePass = view.findViewById<Button>(R.id.buttonChangePass)
         buttonChangePass.setOnClickListener {
             //Close keyboard
-            val imm: InputMethodManager? =
+            val inputMng: InputMethodManager =
                 context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm?.hideSoftInputFromWindow(view.windowToken, 0)
+            inputMng.hideSoftInputFromWindow(view.windowToken, 0)
 
 
             val newPass = passwordTxt.text.toString()
@@ -105,6 +103,7 @@ class ChangePassFragment : Fragment() {
 
     /**
      * Check if password is correct, by sending login Request to the Firebase Auth REST API
+     * if it's correct send request to api to change password
      */
     private fun testPassword(email: String, password: String, newPassword: String) {
         val call = RetrofitAuthInit().authService().loginUser(email, password, true)
@@ -118,7 +117,7 @@ class ChangePassFragment : Fragment() {
                 //If response is Successful this means the password is correct
                 if (response.isSuccessful) {
                     response.body()?.let {
-                        val response: LoginUserResponse = it
+                        val responseReceived: LoginUserResponse = it
                         // takes the data read from API and saves it
                         val sharedPreference = requireContext().getSharedPreferences(
                             "USER",
@@ -126,10 +125,10 @@ class ChangePassFragment : Fragment() {
                         )
                         //Save the refreshToken and idToken generated
                         val editor = sharedPreference.edit()
-                        editor.putString("refreshTokenUser", response.refreshToken)
-                        editor.putString("idTokenUser", response.idToken)
+                        editor.putString("refreshTokenUser", responseReceived.refreshToken)
+                        editor.putString("idTokenUser", responseReceived.idToken)
                         editor.apply()
-                        idToken = response.idToken.toString()
+                        idToken = responseReceived.idToken.toString()
                         //Since the old password it's correct call the api to change the password
                         changePassword(newPassword)
                     }
@@ -162,12 +161,15 @@ class ChangePassFragment : Fragment() {
      * access api with the call specified in changePass
      */
     private fun changePassword(password: String) {
-        //exchange refresh token with a ID token
+        //call to exchange refresh token with a ID token
         val call =
             RetrofitAuthInit().authService().changePassword(idToken, password, true)
         processChangePass(call)
     }
 
+    /**
+     * Process call to change password
+     */
     private fun processChangePass(call: Call<ChangePassResponse>) {
         call.enqueue(object : Callback<ChangePassResponse> {
             override fun onResponse(
@@ -183,12 +185,18 @@ class ChangePassFragment : Fragment() {
                             "USER",
                             AppCompatActivity.MODE_PRIVATE
                         )
+                        //if password change is sucessful, save the new idToken and refreshToken
                         val editor = sharedPreference.edit()
                         editor.putString("refreshTokenUser", result.refreshToken)
                         editor.putString("idTokenUser", result.idToken)
                         editor.apply()
-                        Toast.makeText(requireContext(), getString(R.string.password_changed), Toast.LENGTH_LONG)
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.password_changed),
+                            Toast.LENGTH_LONG
+                        )
                             .show()
+                        //Redirect to mainActivity
                         val intent = Intent(requireContext(), MainActivity::class.java)
                         startActivity(intent)
                         activity?.finish()

@@ -7,10 +7,11 @@ import com.google.gson.annotations.SerializedName
  * Class that represents the products received from the API
  */
 import java.io.Serializable
+
 /**
-* Class that represents product received from API
-*/
-data class Store (
+ * Class that represents product received from API
+ */
+data class Store(
     @SerializedName("name") val name: String?,
-): Serializable
+) : Serializable
 

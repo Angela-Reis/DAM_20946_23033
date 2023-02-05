@@ -89,13 +89,13 @@ class LoginActivity : AppCompatActivity() {
 
                 if (response.isSuccessful) {
                     response.body()?.let {
-                        val response: LoginUserResponse = it
+                        val responseReceived: LoginUserResponse = it
                         // takes the data read from API and saves it
                         val sharedPreference = getSharedPreferences("USER", MODE_PRIVATE)
                         val editor = sharedPreference.edit()
-                        editor.putString("emailUser", response.email)
-                        editor.putString("refreshTokenUser", response.refreshToken)
-                        editor.putString("idTokenUser", response.idToken)
+                        editor.putString("emailUser", responseReceived.email)
+                        editor.putString("refreshTokenUser", responseReceived.refreshToken)
+                        editor.putString("idTokenUser", responseReceived.idToken)
                         editor.apply()
                         val intent = Intent(applicationContext, MainActivity::class.java)
                         startActivity(intent)
@@ -159,7 +159,7 @@ class LoginActivity : AppCompatActivity() {
             val inflater = this.layoutInflater
             builder.setView(inflater.inflate(R.layout.fragment_about_app, null))
             builder.create()
-            builder.setPositiveButton("OK") { dialog, id ->
+            builder.setPositiveButton("OK") { dialog, _ ->
                 dialog.dismiss() // dismiss AlertDialog
             }
             builder.show()

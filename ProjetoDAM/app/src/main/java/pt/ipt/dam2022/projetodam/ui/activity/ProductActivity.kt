@@ -31,7 +31,10 @@ import java.net.URL
 import java.text.DecimalFormat
 import java.util.concurrent.Executors
 
-
+/**
+ * Activity that shows a product page with all of the product info
+ * and the price of the product in each store it exists on
+ */
 class ProductActivity : AppCompatActivity() {
     private lateinit var productKey: String
     private lateinit var product: Product

@@ -17,7 +17,7 @@ import retrofit2.http.POST
 interface AuthService {
 
     //API Documentation can be found in https://firebase.google.com/docs/reference/rest/auth
-    /*
+    /**
      * signup a new user to the app
      */
     @FormUrlEncoded
@@ -28,6 +28,9 @@ interface AuthService {
         @Field("returnSecureToken") returnSecure: Boolean
     ): Call<SignUpResponse>
 
+    /**
+     * Login user
+     */
     @FormUrlEncoded
     @POST("./accounts:signInWithPassword?key=AIzaSyBcGnZpZRKNtzHLLHgfqj1jMns8G2x_uPQ")
     fun loginUser(
@@ -36,6 +39,10 @@ interface AuthService {
         @Field("returnSecureToken") returnSecure: Boolean
     ): Call<LoginUserResponse>
 
+
+    /**
+     * Request new idToken, since it only lasts a hour, with the refresh_token
+     */
     @FormUrlEncoded
     @POST("./token?key=AIzaSyBcGnZpZRKNtzHLLHgfqj1jMns8G2x_uPQ&grant_type=refresh_token")
     fun refreshToken(
@@ -43,6 +50,9 @@ interface AuthService {
     ): Call<RefreshTokenResponse>
 
 
+    /**
+     * Change password of the user, the idToken corresponds to
+     */
     @FormUrlEncoded
     @POST("./accounts:update?key=AIzaSyBcGnZpZRKNtzHLLHgfqj1jMns8G2x_uPQ&grant_type=refresh_token")
     fun changePassword(

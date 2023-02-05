@@ -32,7 +32,6 @@ import pt.ipt.dam2022.projetodam.ui.adapter.ProductsListAdapter
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import kotlin.math.log
 
 
 /**
@@ -44,16 +43,17 @@ class ProductsFragment : Fragment(), MenuProvider {
     private lateinit var tempList: MutableMap<String, Product>
     private lateinit var idToken: String
     lateinit var recyclerView: RecyclerView
-    lateinit var selectStore: TextView
-    lateinit var selectCategory: TextView
-    lateinit var selectOrder: TextView
-    lateinit var selectedStore: BooleanArray
-    lateinit var selectedCategory: BooleanArray
+    private lateinit var selectStore: TextView
+    private lateinit var selectCategory: TextView
+    private lateinit var selectOrder: TextView
+    private lateinit var selectedStore: BooleanArray
+    private lateinit var selectedCategory: BooleanArray
     lateinit var stores: Map<String, Store>
-    lateinit var categories: Array<String?>
-    var selectedOrder: Int = 0
+    private lateinit var categories: Array<String?>
+    private var selectedOrder: Int = 0
     private lateinit var orderOptions: Array<String>
     private var dialog: AlertDialog? = null
+
     // Register the launcher and result handler of the bar code Scanner
     private val barcodeLauncher = registerForActivityResult(
         ScanContract()
@@ -86,21 +86,27 @@ class ProductsFragment : Fragment(), MenuProvider {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
+        //Options of how user can order the products
         orderOptions = arrayOf(
             getString(R.string.ascending_price), getString(
                 R.string.descending_price
             )
         )
+
+        //Get idToken
         val sharedPreference =
             activity?.getSharedPreferences("USER", AppCompatActivity.MODE_PRIVATE)
         if (sharedPreference != null) {
             idToken = sharedPreference.getString("idTokenUser", null).toString()
         }
+
+        //Get references to the components of the fragment
         recyclerView = view.findViewById(R.id.productList_view)
         selectStore = view.findViewById(R.id.selectStore)
         selectCategory = view.findViewById(R.id.selectCategory)
         selectOrder = view.findViewById(R.id.selectOrder)
 
+        //List all products, make request to api
         listProducts()
 
         //add refresh products when swiping down
@@ -109,6 +115,9 @@ class ProductsFragment : Fragment(), MenuProvider {
             listProducts() // your code
             pullToRefresh.isRefreshing = false
         }
+
+        //add menu provider in order to add menu options, barcode scanner and search
+        // in the overwritten function onCreateMenu
         val menuHost: MenuHost = requireActivity()
         menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
@@ -116,6 +125,10 @@ class ProductsFragment : Fragment(), MenuProvider {
     }
 
 
+    /*
+     * Function called by bar code scanner to check is product exists in the Database
+     * this is checked by calling the API with a query
+     */
     private fun checkProductExistence(barcode: String) {
         val call = RetrofitProductsInit(requireContext()).productService()
             .getProductBarCode("\"barcode\"", "\"" + barcode + "\"", idToken)
@@ -153,8 +166,11 @@ class ProductsFragment : Fragment(), MenuProvider {
 
     }
 
+    /**
+     * Process the barCode request after the request to API returned the results
+     */
     fun processBarCodeResult(resultProduct: Map<String, Product>?, barcode: String) {
-        if (resultProduct != null && resultProduct.isNotEmpty()) {
+        if (resultProduct?.isNotEmpty() == true) {
             //if response is not null, grab the first item,
             val productKey = resultProduct.keys.toList()[0]
             val p = resultProduct[productKey]
@@ -177,14 +193,14 @@ class ProductsFragment : Fragment(), MenuProvider {
                 }
             )
 
-            builder.setPositiveButton(getString(R.string.search)) { dialog, which ->
+            builder.setPositiveButton(getString(R.string.search)) { _, _ ->
                 //Open Activity with web search of product bar code
                 val intent = Intent(Intent.ACTION_WEB_SEARCH)
                 intent.putExtra(SearchManager.QUERY, barcode)
                 startActivity(intent)
             }
 
-            builder.setNegativeButton(getString(R.string.cancel)) { dialog, which ->
+            builder.setNegativeButton(getString(R.string.cancel)) { _, _ ->
 
             }
             builder.show()
@@ -269,7 +285,7 @@ class ProductsFragment : Fragment(), MenuProvider {
     /**
      * Get list of all stores and save it in the variable stores of type Map<String, Stores>
      */
-    fun getStore() {
+    private fun getStore() {
         val call =
             RetrofitProductsInit(requireContext()).productService().listAllStores(idToken)
         // use data read
@@ -326,10 +342,10 @@ class ProductsFragment : Fragment(), MenuProvider {
         selectedStore = BooleanArray(stores.size) { true }
         selectedCategory = BooleanArray(categories.size) { true }
 
-        //tranform Map of stores into Array
+        //transform Map of stores into Array
         val storeArray = stores.map { it.value.name }.toTypedArray()
 
-        //build the multi selectores Dialog for stores and category
+        //build the multi selectors Dialog for stores and category
         buildSelectorDialog(
             categories,
             selectCategory,
@@ -343,27 +359,24 @@ class ProductsFragment : Fragment(), MenuProvider {
             getString(R.string.select_store)
         )
 
-
+        //Defines what happens when clicked on the selectOrder TextView
         selectOrder.setOnClickListener {
+            //Open dialog with options
             val builderDialog = AlertDialog.Builder(requireContext())
             builderDialog.setTitle(getString(R.string.order_by))
-
-
             builderDialog.setSingleChoiceItems(orderOptions, selectedOrder) { dialogInterface, i ->
+                //If user selects item filterData according to the order selected
                 selectedOrder = i
                 filterData()
                 dialogInterface.dismiss()
             }
-
-            builderDialog.setNeutralButton(getString(R.string.cancel)) { dialog, which ->
+            builderDialog.setNeutralButton(getString(R.string.cancel)) { dialog, _ ->
                 dialog.cancel()
             }
-
             val dialog = builderDialog.create()
             dialog.show()
             //set color of the dialog button
             setDialogButtonColor(dialog)
-
         }
 
 
@@ -383,19 +396,20 @@ class ProductsFragment : Fragment(), MenuProvider {
             val builderDialog = AlertDialog.Builder(requireContext())
             builderDialog.setTitle(title)
 
-            // alert dialog shouldn't be cancellable
+            // set alert dialog so it isn't cancellable
             builderDialog.setCancelable(false)
 
-            // Creating multiple selection by using setMutliChoiceItem method
+            // Creating multiple selection by using setMultiChoiceItem method
             builderDialog.setMultiChoiceItems(
                 dialogList, selectedArray
-            ) { dialog, whichButton, isChecked ->
+            ) { _, whichButton, isChecked ->
+                //Change option so that array according to actions selected
                 selectedArray[whichButton] = isChecked
             }
 
 
-            // handle the positive button of the dialog
-            builderDialog.setPositiveButton("OK") { dialog, which ->
+            // handle the positive button of the dialog, filter the data when it's selected
+            builderDialog.setPositiveButton("OK") { _, _ ->
                 filterData()
             }
 
@@ -421,13 +435,14 @@ class ProductsFragment : Fragment(), MenuProvider {
         //get all the stores keys, these will be in the same order as tempList
         var storesList: List<String> = ArrayList(stores.keys)
         //keys of stores selected
-        storesList = storesList.filterIndexed { index, value -> selectedStore[index] }
+        storesList = storesList.filterIndexed { index, _ -> selectedStore[index] }
         tempList.entries.retainAll {
-            elementCommon(ArrayList(it.value.stores?.keys), storesList)
+            elementCommon(ArrayList(it.value.stores?.keys!!), storesList)
         }
 
-        var categories: List<String> = categories.asList() as List<String>
-        categories = categories.filterIndexed { index, value -> selectedCategory[index] }
+        //get all the
+        var categories: List<String?> = categories.asList()
+        categories = categories.filterIndexed { index, _ -> selectedCategory[index] }
         tempList.entries.retainAll {
             categories.contains(it.value.category)
         }
@@ -435,13 +450,14 @@ class ProductsFragment : Fragment(), MenuProvider {
         //order tempList in accordance to the selected option
         orderProducts()
 
+        //notify the recycler view adapter that the data changed so it can update it
         recyclerView.adapter?.notifyDataSetChanged()
 
 
     }
 
     /**
-     * replace the prouduct Map in the recyclerView with a sorted version, depending on which option is selected
+     * replace the product Map in the recyclerView with a sorted version, depending on which option is selected
      */
     private fun orderProducts() {
         //Sort by the selected option
@@ -488,21 +504,21 @@ class ProductsFragment : Fragment(), MenuProvider {
                 if (!::tempList.isInitialized) {
                     return false
                 }
-                    //clear the tmpList, the list that is shown in the RecyclerView
-                    tempList.clear()
-                    //put all the products in tempList
-                    tempList.putAll(productsList)
-                    filterData()
-                    //if text in searchView Exists
-                    if (!newText.isNullOrEmpty()) {
-                        //Filter the tmpList to only contain the products that contain the search text
-                        val searchTxt = newText.lowercase()
-                        tempList.entries.retainAll {
-                            (it.value.name?.lowercase()?.contains(searchTxt)) == true
-                        }
+                //clear the tmpList, the list that is shown in the RecyclerView
+                tempList.clear()
+                //put all the products in tempList
+                tempList.putAll(productsList)
+                filterData()
+                //if text in searchView Exists
+                if (!newText.isNullOrEmpty()) {
+                    //Filter the tmpList to only contain the products that contain the search text
+                    val searchTxt = newText.lowercase()
+                    tempList.entries.retainAll {
+                        (it.value.name?.lowercase()?.contains(searchTxt)) == true
                     }
-                    //notify the recyclerView in order for it to update with the right products
-                    recyclerView.adapter?.notifyDataSetChanged()
+                }
+                //notify the recyclerView in order for it to update with the right products
+                recyclerView.adapter?.notifyDataSetChanged()
 
                 return false
             }

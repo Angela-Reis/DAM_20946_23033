@@ -5,10 +5,10 @@ import android.content.Context
 import android.content.res.Configuration
 import pt.ipt.dam2022.projetodam.LanguageUtil.updateConfigLang
 
-/*
- * This class will be used to make it to overwrite some methods
+/**
+ * This class will be used to overwrite some methods
  * in order for it to use the language chosen by the user
- * To use it was added in the manifest in the tag <application
+ * To use it in all app Activities it was added in the manifest in the tag <application
  */
 class MyApp : Application() {
 

@@ -7,6 +7,9 @@ import java.util.Locale
 
 object LanguageUtil {
 
+    /**
+     * Update the locale of the app, in order to use right language
+     */
     fun updateConfigLang(context: Context): Context? {
         //Get the saved language in sharedPreferences LANG
         val sharedLang = context.getSharedPreferences("LANG", AppCompatActivity.MODE_PRIVATE)

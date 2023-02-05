@@ -31,11 +31,7 @@ class ProductPricesAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val p = storePrices[position]
-        holder.let {
-            if (p != null) {
-                it.bindView(p)
-            }
-        }
+        holder.bindView(p)
     }
 
 

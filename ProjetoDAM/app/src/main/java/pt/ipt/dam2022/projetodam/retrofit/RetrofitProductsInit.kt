@@ -14,15 +14,17 @@ import retrofit2.converter.gson.GsonConverterFactory
  * API Documentation can be found in
  * https://firebase.google.com/docs/database/rest/retrieve-data
  */
-class RetrofitProductsInit(private var context: Context) {
+class RetrofitProductsInit(context: Context) {
 
 
     //'url' to access the REST API
-    private val host = "https://projetodam-20946-23033-default-rtdb.europe-west1.firebasedatabase.app/"
-    // create Gson to interpret Json
-    private val gson:Gson = GsonBuilder().setLenient().create()
+    private val host =
+        "https://projetodam-20946-23033-default-rtdb.europe-west1.firebasedatabase.app/"
 
-    var client: OkHttpClient = OkHttpClient().newBuilder()
+    // create Gson to interpret Json
+    private val gson: Gson = GsonBuilder().setLenient().create()
+
+    private var client: OkHttpClient = OkHttpClient().newBuilder()
         .authenticator(RefreshAuth(context))
         .build()
 
