@@ -3,7 +3,7 @@ package pt.ipt.dam2022.projetodam
 import android.app.Application
 import android.content.Context
 import android.content.res.Configuration
-import pt.ipt.dam2022.projetodam.LanguageUtil.updateConfigLang
+import pt.ipt.dam2022.projetodam.FunctionsUtil.updateConfigLang
 
 /**
  * This class will be used to overwrite some methods

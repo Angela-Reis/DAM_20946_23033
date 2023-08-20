@@ -15,7 +15,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import pt.ipt.dam2022.projetodam.LanguageUtil
+import pt.ipt.dam2022.projetodam.FunctionsUtil
 import pt.ipt.dam2022.projetodam.R
 import pt.ipt.dam2022.projetodam.model.Product
 import pt.ipt.dam2022.projetodam.model.Store
@@ -191,7 +191,7 @@ class ProductActivity : AppCompatActivity() {
     }
 
     override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(LanguageUtil.updateConfigLang(newBase))
+        super.attachBaseContext(FunctionsUtil.updateConfigLang(newBase))
     }
 
 }

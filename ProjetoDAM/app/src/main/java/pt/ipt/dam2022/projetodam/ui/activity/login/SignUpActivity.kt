@@ -1,5 +1,6 @@
 package pt.ipt.dam2022.projetodam.ui.activity.login
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
@@ -15,7 +16,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.util.PatternsCompat
 import org.json.JSONObject
-import pt.ipt.dam2022.projetodam.LanguageUtil
+import pt.ipt.dam2022.projetodam.FunctionsUtil
 import pt.ipt.dam2022.projetodam.R
 import pt.ipt.dam2022.projetodam.model.auth.SignUpResponse
 import pt.ipt.dam2022.projetodam.retrofit.RetrofitAuthInit
@@ -31,6 +32,13 @@ class SignUpActivity : AppCompatActivity() {
         setContentView(R.layout.activity_signup)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        FunctionsUtil.requestPermissionsIfNecessary(
+            arrayOf(
+                Manifest.permission.INTERNET,
+                Manifest.permission.ACCESS_NETWORK_STATE,
+            ), this, this
+        )
 
         // get reference to button
         val btnSignUp = findViewById<Button>(R.id.buttonSignUp)
@@ -163,6 +171,6 @@ class SignUpActivity : AppCompatActivity() {
 
 
     override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(LanguageUtil.updateConfigLang(newBase))
+        super.attachBaseContext(FunctionsUtil.updateConfigLang(newBase))
     }
 }

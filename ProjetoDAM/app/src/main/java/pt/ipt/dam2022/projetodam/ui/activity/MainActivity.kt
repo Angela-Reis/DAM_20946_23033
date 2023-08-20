@@ -5,7 +5,6 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
@@ -13,19 +12,16 @@ import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.navigation.NavigationView
-import pt.ipt.dam2022.projetodam.LanguageUtil
+import pt.ipt.dam2022.projetodam.FunctionsUtil
 import pt.ipt.dam2022.projetodam.R
 import pt.ipt.dam2022.projetodam.ui.activity.login.LoginActivity
 import pt.ipt.dam2022.projetodam.ui.fragments.AboutAppFragment
 import pt.ipt.dam2022.projetodam.ui.fragments.ChangePassFragment
 import pt.ipt.dam2022.projetodam.ui.fragments.ProductsFragment
-import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -87,18 +83,24 @@ class MainActivity : AppCompatActivity() {
             true
         }
         //Request that have not been granted at this point
-        requestPermissionsIfNecessary(
+        FunctionsUtil.requestPermissionsIfNecessary(
             arrayOf(
                 Manifest.permission.INTERNET,
                 Manifest.permission.ACCESS_NETWORK_STATE,
+                Manifest.permission.ACCESS_WIFI_STATE,
                 Manifest.permission.CAMERA
-            )
+            ),
+            this,this
         )
 
         if (savedInstanceState == null) {
             //Change to the ProductsFragment
             changeFragment(ProductsFragment(), resources.getString(R.string.app_name))
         }
+
+        //TEMPORARY CODE CHANGE TO MAP TO TEST THE CODE
+        val intent = Intent(this, MapActivity::class.java)
+        this.startActivity(intent)
     }
 
     //Change the fragment
@@ -147,28 +149,6 @@ class MainActivity : AppCompatActivity() {
 
 
     /**
-     * function to collect user permission
-     */
-    private fun requestPermissionsIfNecessary(permissions: Array<out String>) {
-        val permissionsToRequest = ArrayList<String>()
-        permissions.forEach { permission ->
-            if (ContextCompat.checkSelfPermission(
-                    this, permission
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                // Permission is not granted
-                permissionsToRequest.add(permission)
-            }
-        }
-        if (permissionsToRequest.size > 0) {
-            ActivityCompat.requestPermissions(
-                this, permissionsToRequest.toArray(arrayOf<String>()), 1
-            )
-        }
-    }
-
-
-    /**
      * Open the dialog with the options of languages and respond to the user selection
      */
     private fun chooseLanguage() {
@@ -208,13 +188,13 @@ class MainActivity : AppCompatActivity() {
         editor.putInt("languageID", selectedId)
         editor.apply()
         //call the update resources of the class LanguageUtil to change the language
-        LanguageUtil.updateConfigLang(this)
+        FunctionsUtil.updateConfigLang(this)
         //recreate activity
         recreate()
     }
 
     override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(LanguageUtil.updateConfigLang(newBase))
+        super.attachBaseContext(FunctionsUtil.updateConfigLang(newBase))
     }
 
 

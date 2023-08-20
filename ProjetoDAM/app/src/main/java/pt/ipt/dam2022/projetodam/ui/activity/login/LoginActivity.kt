@@ -1,5 +1,6 @@
 package pt.ipt.dam2022.projetodam.ui.activity.login
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
@@ -15,7 +16,8 @@ import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.util.PatternsCompat
-import pt.ipt.dam2022.projetodam.LanguageUtil
+import pt.ipt.dam2022.projetodam.FunctionsUtil
+import pt.ipt.dam2022.projetodam.FunctionsUtil.requestPermissionsIfNecessary
 import pt.ipt.dam2022.projetodam.R
 import pt.ipt.dam2022.projetodam.model.auth.LoginUserResponse
 import pt.ipt.dam2022.projetodam.retrofit.RetrofitAuthInit
@@ -30,7 +32,12 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-
+        requestPermissionsIfNecessary(
+            arrayOf(
+                Manifest.permission.INTERNET,
+                Manifest.permission.ACCESS_NETWORK_STATE,
+            ), this, this
+        )
         // get reference to button
         val btnRegister = findViewById<Button>(R.id.buttonRegister)
         // set on-click listener
@@ -144,7 +151,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(LanguageUtil.updateConfigLang(newBase))
+        super.attachBaseContext(FunctionsUtil.updateConfigLang(newBase))
     }
 
 
