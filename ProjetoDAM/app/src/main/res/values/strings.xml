@@ -60,4 +60,5 @@
     <string name="email_credential">pricer.test.app@gmail.com</string>
     <string name="password_credential">Pricer2023</string>
     <string name="font" translatable="false">sans-serif-condensed</string>
+    <string name="follow_location">Bloquear na localização</string>
 </resources>
