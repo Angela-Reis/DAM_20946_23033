@@ -29,6 +29,15 @@
             android:gravity="end"
             android:text="9,99€"
             android:textSize="25sp" />
+
+        <ImageButton
+            android:id="@+id/find_locations"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_baseline_location_on_24"
+            android:background="@android:color/holo_blue_light"
+            android:layout_marginLeft="16dp"/>
+
     </LinearLayout>
 
     <View

@@ -4,6 +4,7 @@ import android.Manifest
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -46,6 +47,8 @@ class MapActivity : AppCompatActivity() {
     private lateinit var roadManager: RoadManager
     private var roadOverlay: Polyline? = null
     private var waypoints: ArrayList<GeoPoint>? = null
+    private var findNearest: Boolean = true
+    private var locationResponse: OverpassResponse? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -55,7 +58,10 @@ class MapActivity : AppCompatActivity() {
         roadManager = OSRMRoadManager(applicationContext)
 
         //Define the store name to search
-        store = "Continente"
+        val intent = intent // Get the Intent that started this activity
+        // Retrieve the value associated with the key "Store"
+        store = intent.getStringExtra("Store").toString()
+
 
         //Request user Permissions
         requestPermissionsIfNecessary(
@@ -83,22 +89,6 @@ class MapActivity : AppCompatActivity() {
         val scaleBarOverlay = ScaleBarOverlay(map)
         scaleBarOverlay.setCentred(true)
         scaleBarOverlay.setScaleBarOffset(this.resources.displayMetrics.widthPixels / 2, 10)
-
-        //Get the location Provider to add to the overlay that shows the user location
-        val locationProvider = GpsMyLocationProvider(this)
-
-        //Create the myLocationOverLay and add a LocationListener to it
-        myLocationOverlay =
-            object : MyLocationNewOverlay(locationProvider, map) {
-                override fun onLocationChanged(location: Location?, source: IMyLocationProvider?) {
-                    super.onLocationChanged(location, source)
-                    waypoints?.get(1)?.let { roadRoute(location, it) }
-                }
-            }
-        myLocationOverlay.enableMyLocation()
-        myLocationOverlay.enableFollowLocation()
-
-        map.overlays.add(myLocationOverlay)
 
 
         //Map listener that detects when the map is altered, and consequently the follow location is disabled
@@ -137,8 +127,55 @@ class MapActivity : AppCompatActivity() {
 
         //Find all locations of the store, make request to api
         findLocations()
+
+
+        //Get the location Provider to add to the overlay that shows the user location
+        val locationProvider = GpsMyLocationProvider(this)
+
+        //Create the myLocationOverLay and add a LocationListener to it
+        myLocationOverlay =
+            object : MyLocationNewOverlay(locationProvider, map) {
+                override fun onLocationChanged(location: Location?, source: IMyLocationProvider?) {
+                    super.onLocationChanged(location, source)
+                    if (findNearest) {
+                        routeToNearest()
+                    } else {
+                        waypoints?.get(1)?.let { roadRoute(location, it) }
+                    }
+                }
+            }
+        myLocationOverlay.enableMyLocation()
+        myLocationOverlay.enableFollowLocation()
+
+        map.overlays.add(myLocationOverlay)
     }
 
+    /**
+     * Set up display of route to nearest location
+     */
+    private fun routeToNearest() {
+        val currentLocation = Location("Current Location")
+        val myLocation = myLocationOverlay.myLocation
+        if (myLocation != null) {
+            currentLocation.latitude = myLocation.latitude
+            currentLocation.longitude = myLocation.longitude
+        }
+
+        if (locationResponse == null) {
+            //Find all locations of the store, make request to api
+            findLocations()
+        }
+        val nearestStore = locationResponse?.let {
+            findNearestStore(
+                currentLocation,
+                it.elements
+            )
+        }
+
+        if (nearestStore != null) {
+            roadRoute(currentLocation, nearestStore)
+        }
+    }
 
     /**
      * access api with the call specified in queryOverpass
@@ -169,10 +206,10 @@ class MapActivity : AppCompatActivity() {
             ) {
                 if (response.isSuccessful) {
 
-                    val locationResponse = response.body()
                     // Check if the response is not null and contains elements
-                    if (locationResponse != null && !locationResponse.elements.isNullOrEmpty()) {
-                        setMarkers(locationResponse)
+                    if (response.body() != null && !response.body()!!.elements.isEmpty()) {
+                        locationResponse = response.body()!!
+                        setMarkers()
                     } else {
                         Toast.makeText(
                             applicationContext,
@@ -208,55 +245,40 @@ class MapActivity : AppCompatActivity() {
     /**
      * Add markers to the map for store locations retrieved from the Overpass API response.
      */
-    private fun setMarkers(locationResponse: OverpassResponse) {
+    private fun setMarkers() {
+        if (locationResponse == null) {
+            //Find all locations of the store, make request to api
+            findLocations()
+        }
         // Iterate through the elements and add markers for each one
-        for (element in locationResponse.elements) {
-            val marker = Marker(map)
-            val lat: Double
-            val lon: Double
+        if (locationResponse != null && locationResponse!!.elements.isNotEmpty()) {
+            for (element in locationResponse!!.elements) {
+                val marker = Marker(map)
+                val lat: Double
+                val lon: Double
 
-            // Check if 'center' exists and use its values if present, otherwise use top-level values
-            if (element.center != null) {
-                lat = element.center.lat
-                lon = element.center.lon
-            } else {
-                lat = element.lat!!
-                lon = element.lon!!
+                // Check if 'center' exists and use its values if present, otherwise use top-level values
+                if (element.center != null) {
+                    lat = element.center.lat
+                    lon = element.center.lon
+                } else {
+                    lat = element.lat!!
+                    lon = element.lon!!
+                }
+
+                // Set the marker position using GeoPoint with the determined lat and lon
+                marker.position = GeoPoint(lat, lon)
+                marker.title = store
+                //println(location + element.lat +" ," + element.lon)
+                map.overlays.add(marker)
             }
-
-            // Set the marker position using GeoPoint with the determined lat and lon
-            marker.position = GeoPoint(lat, lon)
-            marker.title = store
-            //println(location + element.lat +" ," + element.lon)
-            map.overlays.add(marker)
         }
 
-        routeToNearest(locationResponse)
+        routeToNearest()
 
         // Refresh the map to display the markers
         map.invalidate()
         myLocationOverlay
-    }
-
-    /**
-     * Set up display of route to nearest location
-     */
-    private fun routeToNearest(locationResponse: OverpassResponse) {
-        val currentLocation = Location("Current Location")
-        val myLocation = myLocationOverlay.myLocation
-        if (myLocation != null) {
-            currentLocation.latitude = myLocation.latitude
-            currentLocation.longitude = myLocation.longitude
-        }
-
-        val nearestStore = findNearestStore(
-            currentLocation,
-            locationResponse.elements
-        )
-
-        if (nearestStore != null) {
-            roadRoute(currentLocation, nearestStore)
-        }
     }
 
 
@@ -267,7 +289,7 @@ class MapActivity : AppCompatActivity() {
 
         var getRoute = true
         //Verify if the user is getting far way from the route
-        if(roadOverlay!=null){
+        if (roadOverlay != null) {
             getRoute = !(roadOverlay!!.isCloseTo(GeoPoint(myLocation), 50.0, map))
         }
 
@@ -367,20 +389,11 @@ class MapActivity : AppCompatActivity() {
         return earthRadius * c
     }
 
-    fun distanceToLine(point: GeoPoint, lineStart: GeoPoint, lineEnd: GeoPoint): Double {
-        val d1 = point.distanceToAsDouble(lineStart)
-        val d2 = point.distanceToAsDouble(lineEnd)
-        val d3 = lineStart.distanceToAsDouble(lineEnd)
-
-        if (d1 >= d2 + d3 || d2 >= d1 + d3) {
-            // The point is closest to one of the line endpoints
-            return Math.min(d1, d2)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
+        if (id == android.R.id.home) {
+            finish()
         }
-
-        // Use the formula to calculate the distance to the line
-        val s = (d1 + d2 + d3) / 2.0
-        val area = Math.sqrt(s * (s - d1) * (s - d2) * (s - d3))
-        return 2.0 * area / d3
+        return false
     }
-
 }

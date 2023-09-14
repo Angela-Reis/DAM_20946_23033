@@ -98,9 +98,6 @@ class MainActivity : AppCompatActivity() {
             changeFragment(ProductsFragment(), resources.getString(R.string.app_name))
         }
 
-        //TEMPORARY CODE CHANGE TO MAP TO TEST THE CODE
-        val intent = Intent(this, MapActivity::class.java)
-        this.startActivity(intent)
     }
 
     //Change the fragment
