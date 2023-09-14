@@ -100,6 +100,16 @@
                 android:layout_height="wrap_content"
                 android:text="@string/zxing_android_embedded"
                 android:textSize="25sp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/osmdroid"
+                android:textSize="25sp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/osmbonuspack"
+                android:textSize="25sp" />
 
             <View
                 android:layout_width="match_parent"

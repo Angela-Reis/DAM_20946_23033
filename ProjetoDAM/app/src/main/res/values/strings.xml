@@ -61,4 +61,6 @@
     <string name="password_credential">Pricer2023</string>
     <string name="font" translatable="false">sans-serif-condensed</string>
     <string name="follow_location">Bloquear na localização</string>
+    <string name="osmdroid">osmdroid</string>
+    <string name="osmbonuspack">osmbonuspack</string>
 </resources>

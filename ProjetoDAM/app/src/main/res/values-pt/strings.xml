@@ -63,4 +63,6 @@ not the default one-->
     <string name="email_credential">pricer.test.app@gmail.com</string>
     <string name="password_credential">Pricer2023</string>
     <string name="follow_location">Seguir a localização</string>
+    <string name="osmdroid">osmdroid</string>
+    <string name="osmbonuspack">osmbonuspack</string>
 </resources>

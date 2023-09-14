@@ -59,4 +59,6 @@
     <string name="email_credential">pricer.test.app@gmail.com</string>
     <string name="password_credential">Pricer2023</string>
     <string name="follow_location">Sigue la ubicación</string>
+    <string name="osmdroid">osmdroid</string>
+    <string name="osmbonuspack">osmbonuspack</string>
 </resources>
