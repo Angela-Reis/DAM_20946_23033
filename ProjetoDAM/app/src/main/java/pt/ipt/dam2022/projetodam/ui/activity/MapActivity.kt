@@ -8,10 +8,9 @@ import android.view.MenuItem
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.osmdroid.bonuspack.routing.OSRMRoadManager
+import org.osmdroid.bonuspack.routing.Road
 import org.osmdroid.bonuspack.routing.RoadManager
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapListener
@@ -36,6 +35,10 @@ import pt.ipt.dam2022.projetodam.retrofit.RetrofitOverpass
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 
 class MapActivity : AppCompatActivity() {
@@ -167,8 +170,7 @@ class MapActivity : AppCompatActivity() {
         }
         val nearestStore = locationResponse?.let {
             findNearestStore(
-                currentLocation,
-                it.elements
+                currentLocation, it.elements
             )
         }
 
@@ -201,8 +203,7 @@ class MapActivity : AppCompatActivity() {
     private fun processLocations(call: Call<OverpassResponse>) {
         call.enqueue(object : Callback<OverpassResponse> {
             override fun onResponse(
-                call: Call<OverpassResponse>,
-                response: Response<OverpassResponse>
+                call: Call<OverpassResponse>, response: Response<OverpassResponse>
             ) {
                 if (response.isSuccessful) {
 
@@ -212,9 +213,7 @@ class MapActivity : AppCompatActivity() {
                         setMarkers()
                     } else {
                         Toast.makeText(
-                            applicationContext,
-                            "No store locations found",
-                            Toast.LENGTH_SHORT
+                            applicationContext, "No store locations found", Toast.LENGTH_SHORT
                         ).show()
                     }
                 } else {
@@ -273,7 +272,7 @@ class MapActivity : AppCompatActivity() {
                 // Set an OnClickListener for the marker
                 marker.setOnMarkerClickListener { marker, _ ->
                     findNearest = false
-                    val location = Location("UserLocation") 
+                    val location = Location("UserLocation")
                     //Change route destination to the marker selected
                     location.latitude = myLocationOverlay.myLocation.latitude
                     location.longitude = myLocationOverlay.myLocation.longitude
@@ -315,25 +314,33 @@ class MapActivity : AppCompatActivity() {
             waypoints!!.add(
                 location
             )
-            // Perform network request on a background thread
-            GlobalScope.launch(Dispatchers.IO) {
-                // Create a Road for the route using RoadManager
-                // Calculate the route
-                val roadResult = roadManager.getRoad(waypoints)
+            // Create a coroutine scope
+            val coroutineScope = CoroutineScope(Dispatchers.IO)
 
-                // Handle the road result, possibly on the main thread
-                launch(Dispatchers.Main) {
-                    locationRoute = location
-                    //Remove old route overlay
-                    if (roadOverlay != null) {
-                        map.overlays.remove(roadOverlay)
+            // Launch a coroutine within the scope
+            coroutineScope.launch {
+                try {
+                    // Perform network request on a background thread
+                    val road = roadManager.getRoad(waypoints)
+
+                    // Use withContext to switch to the main thread for UI updates
+                    withContext(Dispatchers.Main) {
+                        if (road.mStatus != Road.STATUS_OK)
+                            Toast.makeText(applicationContext, "Error when loading the road - status=" + road.mStatus, Toast.LENGTH_SHORT).show();
+
+                        locationRoute = location
+                        // Remove old route overlay
+                        if (roadOverlay != null) {
+                            map.overlays.remove(roadOverlay)
+                        }
+                        // Display the new route on the map
+                        roadOverlay = RoadManager.buildRoadOverlay(road)
+                        map.overlays.add(roadOverlay)
+                        map.invalidate()
                     }
-                    // Display the new route on the map
-                    roadOverlay = RoadManager.buildRoadOverlay(roadResult)
-                    map.overlays.add(roadOverlay)
-                    map.invalidate()
+                } catch (e: Exception) {
+                    // Handle exceptions here
                 }
-
             }
         }
     }
@@ -342,8 +349,7 @@ class MapActivity : AppCompatActivity() {
      * Find nearest store according to it's latitude and longitude
      */
     private fun findNearestStore(
-        currentLocation: Location,
-        elements: List<OverpassElement>
+        currentLocation: Location, elements: List<OverpassElement>
     ): GeoPoint? {
         var nearestStore: GeoPoint? = null
         var shortestDistance = Double.MAX_VALUE
@@ -382,21 +388,18 @@ class MapActivity : AppCompatActivity() {
      * Calculate distance using Haversine formula
      */
     private fun calculateDistance(
-        lat1: Double,
-        lon1: Double,
-        lat2: Double,
-        lon2: Double
+        lat1: Double, lon1: Double, lat2: Double, lon2: Double
     ): Double {
         val earthRadius = 6371 // Earth's radius in kilometers
 
         val dLat = Math.toRadians(lat2 - lat1)
         val dLon = Math.toRadians(lon2 - lon1)
 
-        val a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
-                Math.sin(dLon / 2) * Math.sin(dLon / 2)
+        val a = sin(dLat / 2) * sin(dLat / 2) + cos(Math.toRadians(lat1)) * cos(
+            Math.toRadians(lat2)
+        ) * sin(dLon / 2) * sin(dLon / 2)
 
-        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
 
         return earthRadius * c
     }
