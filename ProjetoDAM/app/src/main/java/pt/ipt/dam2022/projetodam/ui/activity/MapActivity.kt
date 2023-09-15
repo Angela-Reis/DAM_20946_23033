@@ -269,6 +269,18 @@ class MapActivity : AppCompatActivity() {
                 // Set the marker position using GeoPoint with the determined lat and lon
                 marker.position = GeoPoint(lat, lon)
                 marker.title = store
+
+                // Set an OnClickListener for the marker
+                marker.setOnMarkerClickListener { marker, _ ->
+                    findNearest = false
+                    val location = Location("UserLocation") 
+                    //Change route destination to the marker selected
+                    location.latitude = myLocationOverlay.myLocation.latitude
+                    location.longitude = myLocationOverlay.myLocation.longitude
+                    roadRoute(location, GeoPoint(marker.position))
+                    true // Indicates that the click event has been consumed
+                }
+
                 //println(location + element.lat +" ," + element.lon)
                 map.overlays.add(marker)
             }
