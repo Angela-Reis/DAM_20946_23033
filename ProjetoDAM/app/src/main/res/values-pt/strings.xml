@@ -65,4 +65,10 @@ not the default one-->
     <string name="follow_location">Seguir a localização</string>
     <string name="osmdroid">osmdroid</string>
     <string name="osmbonuspack">osmbonuspack</string>
+    <string name="error_route">Erro ao carregar a estrada </string>
+    <string name="error_route_invalid">Estrada ainda não foi construída</string>
+    <string name="error_route_technical_issues">Erros técnicos</string>
+    <string name="no_store_locations">Nenhuma loja encontrada</string>
+    <string name="error_store_locations">Erro ao procurar localizações de lojas</string>
+    <string name="network_error_store_locations">Erro de rede ao pesquisar por lojas</string>
 </resources>

@@ -61,4 +61,10 @@
     <string name="follow_location">Sigue la ubicación</string>
     <string name="osmdroid">osmdroid</string>
     <string name="osmbonuspack">osmbonuspack</string>
+    <string name="error_route">Error al cargar la carretera </string>
+    <string name="error_route_invalid">La carretera aún no se ha construido</string>
+    <string name="error_route_technical_issues">Errores técnicos</string>
+    <string name="no_store_locations">No se encontraron tiendas</string>
+    <string name="error_store_locations">Error al buscar ubicaciones de tiendas</string>
+    <string name="network_error_store_locations">Error de red al buscar ubicaciones de tiendas</string>
 </resources>

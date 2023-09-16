@@ -1,6 +1,9 @@
 package pt.ipt.dam2022.projetodam.ui.activity
 
 import android.Manifest
+import android.app.Activity
+import android.content.Context
+import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
@@ -8,6 +11,8 @@ import android.view.MenuItem
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import kotlinx.coroutines.*
 import org.osmdroid.bonuspack.routing.OSRMRoadManager
 import org.osmdroid.bonuspack.routing.Road
@@ -27,7 +32,6 @@ import org.osmdroid.views.overlay.compass.CompassOverlay
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.IMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
-import pt.ipt.dam2022.projetodam.FunctionsUtil.requestPermissionsIfNecessary
 import pt.ipt.dam2022.projetodam.R
 import pt.ipt.dam2022.projetodam.model.overpass.OverpassElement
 import pt.ipt.dam2022.projetodam.model.overpass.OverpassResponse
@@ -42,6 +46,7 @@ import kotlin.math.sqrt
 
 
 class MapActivity : AppCompatActivity() {
+    private lateinit var permissions: Array<String>
     private var locationRoute: GeoPoint? = null
     private lateinit var map: MapView
     private lateinit var myLocationOverlay: MyLocationNewOverlay
@@ -59,26 +64,6 @@ class MapActivity : AppCompatActivity() {
 
         // Create a roadManager instance using the OSRMRoadManager
         roadManager = OSRMRoadManager(applicationContext)
-
-        //Define the store name to search
-        val intent = intent // Get the Intent that started this activity
-        // Retrieve the value associated with the key "Store"
-        store = intent.getStringExtra("Store").toString()
-
-
-        //Request user Permissions
-        requestPermissionsIfNecessary(
-            arrayOf(
-                Manifest.permission.INTERNET,
-                Manifest.permission.ACCESS_NETWORK_STATE,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ), this, this
-        )
-
-        //Get the button to center the user location
-        btnLocation = findViewById(R.id.btnLocation)
-
         //Set up the map with all the needed overlays
         Configuration.getInstance().userAgentValue = this.packageName
         map = findViewById(R.id.map)
@@ -93,6 +78,110 @@ class MapActivity : AppCompatActivity() {
         scaleBarOverlay.setCentred(true)
         scaleBarOverlay.setScaleBarOffset(this.resources.displayMetrics.widthPixels / 2, 10)
 
+
+        //Define the store name to search
+        val intent = intent // Get the Intent that started this activity
+        // Retrieve the value associated with the key "Store"
+        store = intent.getStringExtra("Store").toString()
+
+        permissions = arrayOf(
+            Manifest.permission.INTERNET,
+            Manifest.permission.ACCESS_NETWORK_STATE,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
+        //Request user Permissions
+        requestPermissionsIfNecessary(
+            permissions
+        )
+
+    }
+
+    /**
+     * function to collect user permission
+     */
+    private fun requestPermissionsIfNecessary(permissions: Array<out String>) {
+        val permissionsToRequest = java.util.ArrayList<String>()
+        permissions.forEach { permission ->
+            if (ContextCompat.checkSelfPermission(
+                    this, permission
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                // Permission is not granted
+                permissionsToRequest.add(permission)
+            }
+        }
+        if (permissionsToRequest.size > 0) {
+            ActivityCompat.requestPermissions(
+                this,
+                permissionsToRequest.toArray(arrayOf<String>()),
+                1
+            )
+        } else {
+            //If there are no Permissions Requested
+            setUpMap()
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 1) {
+            for (i in permissions.indices) {
+                val grantResult = grantResults[i]
+                //If the user did not give permission finish the activity
+                if (grantResult != PackageManager.PERMISSION_GRANTED) {
+                    finish()
+                }
+            }
+            setUpMap()
+        }
+    }
+
+
+    private fun setUpMap() {
+
+        //Find all locations of the store, make request to api
+        findLocations()
+
+
+        //Get the location Provider to add to the overlay that shows the user location
+        val locationProvider = GpsMyLocationProvider(this)
+        //Create the myLocationOverLay and add a LocationListener to it
+        myLocationOverlay =
+            object : MyLocationNewOverlay(locationProvider, map) {
+                override fun onLocationChanged(location: Location?, source: IMyLocationProvider?) {
+                    super.onLocationChanged(location, source)
+                    if (findNearest) {
+                        routeToNearest()
+                    } else {
+                        waypoints?.get(1)?.let { roadRoute(location, it) }
+                    }
+                }
+            }
+        myLocationOverlay.enableMyLocation()
+        myLocationOverlay.enableFollowLocation()
+        map.overlays.add(myLocationOverlay)
+
+        //Get the button to center the user location
+        btnLocation = findViewById(R.id.btnLocation)
+
+        //Change the button image and change the map actions
+        btnLocation.setOnClickListener {
+            if (!myLocationOverlay.isFollowLocationEnabled) {
+                myLocationOverlay.enableMyLocation()
+                //If following the location is not enabled start following the user location
+                myLocationOverlay.enableFollowLocation()
+                btnLocation.setImageResource(R.drawable.ic_baseline_my_location_24)
+            } else {
+                //
+                myLocationOverlay.disableFollowLocation()
+                btnLocation.setImageResource(R.drawable.ic_baseline_location_searching_24)
+            }
+        }
 
         //Map listener that detects when the map is altered, and consequently the follow location is disabled
         val mapListener = object : MapListener {
@@ -113,45 +202,8 @@ class MapActivity : AppCompatActivity() {
 
         // Add the MapListener to the MapView
         map.addMapListener(mapListener)
-
-
-        //Change the button image and change the map actions
-        btnLocation.setOnClickListener {
-            if (!myLocationOverlay.isFollowLocationEnabled) {
-                //If following the location is not enabled start following the user location
-                myLocationOverlay.enableFollowLocation()
-                btnLocation.setImageResource(R.drawable.ic_baseline_my_location_24)
-            } else {
-                //
-                myLocationOverlay.disableFollowLocation()
-                btnLocation.setImageResource(R.drawable.ic_baseline_location_searching_24)
-            }
-        }
-
-        //Find all locations of the store, make request to api
-        findLocations()
-
-
-        //Get the location Provider to add to the overlay that shows the user location
-        val locationProvider = GpsMyLocationProvider(this)
-
-        //Create the myLocationOverLay and add a LocationListener to it
-        myLocationOverlay =
-            object : MyLocationNewOverlay(locationProvider, map) {
-                override fun onLocationChanged(location: Location?, source: IMyLocationProvider?) {
-                    super.onLocationChanged(location, source)
-                    if (findNearest) {
-                        routeToNearest()
-                    } else {
-                        waypoints?.get(1)?.let { roadRoute(location, it) }
-                    }
-                }
-            }
-        myLocationOverlay.enableMyLocation()
-        myLocationOverlay.enableFollowLocation()
-
-        map.overlays.add(myLocationOverlay)
     }
+
 
     /**
      * Set up display of route to nearest location
@@ -213,7 +265,7 @@ class MapActivity : AppCompatActivity() {
                         setMarkers()
                     } else {
                         Toast.makeText(
-                            applicationContext, "No store locations found", Toast.LENGTH_SHORT
+                            applicationContext, applicationContext.getString(R.string.no_store_locations), Toast.LENGTH_SHORT
                         ).show()
                     }
                 } else {
@@ -223,7 +275,7 @@ class MapActivity : AppCompatActivity() {
                     )
                     Toast.makeText(
                         applicationContext,
-                        "Error searching for store locations",
+                        applicationContext.getString(R.string.error_store_locations),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -231,10 +283,9 @@ class MapActivity : AppCompatActivity() {
 
             override fun onFailure(call: Call<OverpassResponse>, t: Throwable) {
                 t.message?.let { Log.e("Network error while searching for store locations", it) }
-
                 Toast.makeText(
                     applicationContext,
-                    "Network error while searching for store locations",
+                    applicationContext.getString(R.string.network_error_store_locations),
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -270,13 +321,13 @@ class MapActivity : AppCompatActivity() {
                 marker.title = store
 
                 // Set an OnClickListener for the marker
-                marker.setOnMarkerClickListener { marker, _ ->
+                marker.setOnMarkerClickListener { mkr, _ ->
                     findNearest = false
                     val location = Location("UserLocation")
                     //Change route destination to the marker selected
                     location.latitude = myLocationOverlay.myLocation.latitude
                     location.longitude = myLocationOverlay.myLocation.longitude
-                    roadRoute(location, GeoPoint(marker.position))
+                    roadRoute(location, GeoPoint(mkr.position))
                     true // Indicates that the click event has been consumed
                 }
 
@@ -319,27 +370,36 @@ class MapActivity : AppCompatActivity() {
 
             // Launch a coroutine within the scope
             coroutineScope.launch {
-                try {
-                    // Perform network request on a background thread
-                    val road = roadManager.getRoad(waypoints)
+                // Perform network request on a background thread
+                val road = roadManager.getRoad(waypoints)
 
-                    // Use withContext to switch to the main thread for UI updates
-                    withContext(Dispatchers.Main) {
-                        if (road.mStatus != Road.STATUS_OK)
-                            Toast.makeText(applicationContext, "Error when loading the road - status=" + road.mStatus, Toast.LENGTH_SHORT).show();
-
-                        locationRoute = location
-                        // Remove old route overlay
-                        if (roadOverlay != null) {
-                            map.overlays.remove(roadOverlay)
+                // Use withContext to switch to the main thread for UI updates
+                withContext(Dispatchers.Main) {
+                    //Check road status
+                    if (road.mStatus != Road.STATUS_OK) {
+                        var text = applicationContext.getString(R.string.error_route)
+                        if(road.mStatus == Road.STATUS_INVALID){
+                            text += applicationContext.getString(R.string.error_route_invalid)
+                        }else if (road.mStatus == Road.STATUS_TECHNICAL_ISSUE){
+                            text += applicationContext.getString(R.string.error_route_technical_issues)
                         }
-                        // Display the new route on the map
-                        roadOverlay = RoadManager.buildRoadOverlay(road)
-                        map.overlays.add(roadOverlay)
-                        map.invalidate()
+                        Toast.makeText(
+                            applicationContext,
+                            text,
+                            Toast.LENGTH_SHORT
+                        ).show();
                     }
-                } catch (e: Exception) {
-                    // Handle exceptions here
+
+
+                    locationRoute = location
+                    // Remove old route overlay
+                    if (roadOverlay != null) {
+                        map.overlays.remove(roadOverlay)
+                    }
+                    // Display the new route on the map
+                    roadOverlay = RoadManager.buildRoadOverlay(road)
+                    map.overlays.add(roadOverlay)
+                    map.invalidate()
                 }
             }
         }
