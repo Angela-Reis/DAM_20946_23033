@@ -69,4 +69,6 @@
     <string name="no_store_locations">Nenhuma loja encontrada</string>
     <string name="error_store_locations">Erro ao procurar localizações de lojas</string>
     <string name="network_error_store_locations">Erro de rede ao pesquisar por lojas</string>
+    <string name="show_route">Mostrar caminho</string>
+    <string name="stop_show_route">Parar de mostrar caminho</string>
 </resources>

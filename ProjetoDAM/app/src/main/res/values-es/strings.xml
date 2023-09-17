@@ -67,4 +67,6 @@
     <string name="no_store_locations">No se encontraron tiendas</string>
     <string name="error_store_locations">Error al buscar ubicaciones de tiendas</string>
     <string name="network_error_store_locations">Error de red al buscar ubicaciones de tiendas</string>
+    <string name="show_route">Mostrar ruta</string>
+    <string name="stop_show_route">Dejar de mostrar ruta</string>
 </resources>

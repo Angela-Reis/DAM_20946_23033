@@ -1,18 +1,22 @@
 package pt.ipt.dam2022.projetodam.ui.activity
 
 import android.Manifest
-import android.app.Activity
-import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.drawable.Drawable
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
+import android.widget.Button
 import android.widget.ImageButton
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import kotlinx.coroutines.*
 import org.osmdroid.bonuspack.routing.OSRMRoadManager
 import org.osmdroid.bonuspack.routing.Road
@@ -46,6 +50,9 @@ import kotlin.math.sqrt
 
 
 class MapActivity : AppCompatActivity() {
+    private lateinit var routeLayout: LinearLayout
+    private lateinit var infoRoad: TextView
+    private var showDirections = false
     private lateinit var permissions: Array<String>
     private var locationRoute: GeoPoint? = null
     private lateinit var map: MapView
@@ -57,10 +64,38 @@ class MapActivity : AppCompatActivity() {
     private var waypoints: ArrayList<GeoPoint>? = null
     private var findNearest: Boolean = true
     private var locationResponse: OverpassResponse? = null
+    private lateinit var instructionsMarkers: ArrayList<Marker>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        instructionsMarkers = ArrayList()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setContentView(R.layout.activity_map)
+
+        //Get the routeLayout that is going to show if there is a route
+        routeLayout = findViewById(R.id.routeLayout)
+
+        //Get the textView that will show the length of the route
+        infoRoad = findViewById(R.id.infoRoad)
+        val directionsBtn = findViewById<Button>(R.id.btnDirections)
+        directionsBtn.setOnClickListener {
+            showDirections = !showDirections
+            if (showDirections) {
+                directionsBtn.text = resources.getString(R.string.stop_show_route)
+                //If it's not following the path click the user and start following
+                if (!myLocationOverlay.isFollowLocationEnabled) {
+                    btnLocation.performClick()
+                }
+            } else {
+                directionsBtn.text = resources.getString(R.string.show_route)
+                //Close all the opened route info windows
+                for (marker in instructionsMarkers) {
+                    if (marker.isInfoWindowShown) {
+                        marker.closeInfoWindow()
+                    }
+                }
+            }
+        }
 
         // Create a roadManager instance using the OSRMRoadManager
         roadManager = OSRMRoadManager(applicationContext)
@@ -113,9 +148,7 @@ class MapActivity : AppCompatActivity() {
         }
         if (permissionsToRequest.size > 0) {
             ActivityCompat.requestPermissions(
-                this,
-                permissionsToRequest.toArray(arrayOf<String>()),
-                1
+                this, permissionsToRequest.toArray(arrayOf<String>()), 1
             )
         } else {
             //If there are no Permissions Requested
@@ -123,10 +156,12 @@ class MapActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Function that is triggered when the user gives a result to the request for permission
+     * This function detects if the user did not give the location permission and closes the map activity
+     */
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
+        requestCode: Int, permissions: Array<String>, grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 1) {
@@ -151,17 +186,21 @@ class MapActivity : AppCompatActivity() {
         //Get the location Provider to add to the overlay that shows the user location
         val locationProvider = GpsMyLocationProvider(this)
         //Create the myLocationOverLay and add a LocationListener to it
-        myLocationOverlay =
-            object : MyLocationNewOverlay(locationProvider, map) {
-                override fun onLocationChanged(location: Location?, source: IMyLocationProvider?) {
-                    super.onLocationChanged(location, source)
-                    if (findNearest) {
-                        routeToNearest()
-                    } else {
-                        waypoints?.get(1)?.let { roadRoute(location, it) }
+        myLocationOverlay = object : MyLocationNewOverlay(locationProvider, map) {
+            override fun onLocationChanged(location: Location?, source: IMyLocationProvider?) {
+                super.onLocationChanged(location, source)
+                if (findNearest) {
+                    routeToNearest()
+                } else {
+                    waypoints?.get(1)?.let { roadRoute(location, it) }
+                }
+                if (instructionsMarkers.size > 0) {
+                    if (showDirections) {
+                        openClosestInfoWindow(location)
                     }
                 }
             }
+        }
         myLocationOverlay.enableMyLocation()
         myLocationOverlay.enableFollowLocation()
         map.overlays.add(myLocationOverlay)
@@ -260,12 +299,14 @@ class MapActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
 
                     // Check if the response is not null and contains elements
-                    if (response.body() != null && !response.body()!!.elements.isEmpty()) {
+                    if (response.body() != null && response.body()!!.elements.isNotEmpty()) {
                         locationResponse = response.body()!!
                         setMarkers()
                     } else {
                         Toast.makeText(
-                            applicationContext, applicationContext.getString(R.string.no_store_locations), Toast.LENGTH_SHORT
+                            applicationContext,
+                            applicationContext.getString(R.string.no_store_locations),
+                            Toast.LENGTH_SHORT
                         ).show()
                     }
                 } else {
@@ -378,19 +419,58 @@ class MapActivity : AppCompatActivity() {
                     //Check road status
                     if (road.mStatus != Road.STATUS_OK) {
                         var text = applicationContext.getString(R.string.error_route)
-                        if(road.mStatus == Road.STATUS_INVALID){
-                            text += applicationContext.getString(R.string.error_route_invalid)
-                        }else if (road.mStatus == Road.STATUS_TECHNICAL_ISSUE){
-                            text += applicationContext.getString(R.string.error_route_technical_issues)
+                        if (road.mStatus == Road.STATUS_INVALID) {
+                            text += " " + applicationContext.getString(R.string.error_route_invalid)
+                        } else if (road.mStatus == Road.STATUS_TECHNICAL_ISSUE) {
+                            text += " " + applicationContext.getString(R.string.error_route_technical_issues)
                         }
                         Toast.makeText(
-                            applicationContext,
-                            text,
-                            Toast.LENGTH_SHORT
-                        ).show();
+                            applicationContext, text, Toast.LENGTH_SHORT
+                        ).show()
+                        //Hide the route info
+                        routeLayout.visibility = View.GONE
+                    } else {
+                        routeLayout.visibility = View.VISIBLE
+                        road.mBoundingBox
+                        road.mLength
+                        // Calculate duration in h:m:s format
+                        val durationSeconds = road.mDuration.toDouble() // Duration in seconds
+                        val hours = durationSeconds.toInt() / 3600
+                        val minutes = (durationSeconds.toInt() % 3600) / 60
+                        val seconds = (durationSeconds.toInt() % 3600) % 60
+                        // Format the duration as h:m:s
+                        val formattedDuration =
+                            String.format("%02d:%02d:%02d", hours, minutes, seconds)
+                        infoRoad.text = "${formattedDuration}\n${"%.2f".format(road.mLength)} km"
+
+
                     }
+                    //Remove the overlays
+                    for (i in 0 until instructionsMarkers.size) {
+                        map.overlays.remove(instructionsMarkers[i])
+                    }
+                    //Remove the instructionsMarkers from the array by replacing it with a new one
+                    instructionsMarkers = ArrayList()
+                    val nodeIcon = ResourcesCompat.getDrawable(
+                        resources, R.drawable.ic_baseline_circle_24, null
+                    )
+                    //Get instructions for the route
+                    for (i in 0 until road.mNodes.size) {
+                        val node = road.mNodes[i]
+                        val instructMarker = Marker(map)
+                        instructMarker.position = node.mLocation
+                        instructMarker.icon = nodeIcon
+                        instructMarker.title = "$i"
+                        instructMarker.subDescription = Road.getLengthDurationText(
+                            applicationContext, node.mLength, node.mDuration
+                        )
+                        instructMarker.snippet = node.mInstructions
+                        instructionsMarkers.add(instructMarker)
 
-
+                        val icon = getManeuverIcon(node.mManeuverType)
+                        instructMarker.image = icon
+                        map.overlays.add(instructMarker)
+                    }
                     locationRoute = location
                     // Remove old route overlay
                     if (roadOverlay != null) {
@@ -470,5 +550,91 @@ class MapActivity : AppCompatActivity() {
             finish()
         }
         return false
+    }
+
+
+    /**
+     * Get the maneuver icon
+     */
+    private fun getManeuverIcon(value: Int): Drawable? {
+        return when (value) {
+            1 -> ContextCompat.getDrawable(applicationContext, R.drawable.ic_continue) // Continue
+            6 -> ContextCompat.getDrawable(
+                applicationContext, R.drawable.ic_slight_right
+            ) // Slight right
+            7 -> ContextCompat.getDrawable(applicationContext, R.drawable.ic_turn_right) // Right
+            8 -> ContextCompat.getDrawable(
+                applicationContext, R.drawable.ic_sharp_right
+            ) // Sharp right
+            12 -> ContextCompat.getDrawable(applicationContext, R.drawable.ic_u_turn) // U-turn
+            5 -> ContextCompat.getDrawable(
+                applicationContext, R.drawable.ic_sharp_left
+            ) // Sharp left
+            4 -> ContextCompat.getDrawable(applicationContext, R.drawable.ic_turn_left) // Left
+            3 -> ContextCompat.getDrawable(
+                applicationContext, R.drawable.ic_slight_left
+            ) // Slight left
+            24 -> ContextCompat.getDrawable(
+                applicationContext, R.drawable.ic_arrived
+            ) // Arrived (at waypoint)
+            27 -> ContextCompat.getDrawable(
+                applicationContext, R.drawable.ic_roundabout
+            ) // Round-about, 1st exit
+            28 -> ContextCompat.getDrawable(
+                applicationContext, R.drawable.ic_roundabout
+            ) // 2nd exit, etc ...
+            29 -> ContextCompat.getDrawable(applicationContext, R.drawable.ic_roundabout)
+            30 -> ContextCompat.getDrawable(applicationContext, R.drawable.ic_roundabout)
+            31 -> ContextCompat.getDrawable(applicationContext, R.drawable.ic_roundabout)
+            32 -> ContextCompat.getDrawable(applicationContext, R.drawable.ic_roundabout)
+            33 -> ContextCompat.getDrawable(applicationContext, R.drawable.ic_roundabout)
+            34 -> ContextCompat.getDrawable(
+                applicationContext, R.drawable.ic_roundabout
+            )
+            else -> ContextCompat.getDrawable(
+                applicationContext, R.drawable.ic_empty
+            )
+        }
+    }
+
+    /**
+     * Open the information window closest to the user location
+     */
+    private fun openClosestInfoWindow(location: Location?) {
+        if (location == null) {
+            return
+        }
+
+        var shorterDistance = Double.MAX_VALUE
+        var openedWindow: Marker? = null
+
+        for (i in 0 until instructionsMarkers.size) {
+            val item = instructionsMarkers[i]
+            val markerLocation = item.position
+
+            // Calculate the distance between the user's location and the marker
+            val distance = calculateDistance(
+                location.latitude,
+                location.longitude,
+                markerLocation.latitude,
+                markerLocation.longitude
+            )
+
+            // Check if the marker is close enough to open the bubble
+            if (distance <= 0.5 && distance <= shorterDistance) {
+                openedWindow = item
+                shorterDistance = distance
+            } else {
+                if (item.isInfoWindowOpen) {
+                    item.closeInfoWindow()
+                }
+            }
+        }
+        if (openedWindow != null) {
+            if (!openedWindow.isInfoWindowOpen) {
+                openedWindow.showInfoWindow()
+            }
+        }
+
     }
 }

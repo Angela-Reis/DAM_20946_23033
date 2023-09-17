@@ -5,11 +5,46 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.activity.MapActivity">
+
     <!-- MapView to display the map -->
     <org.osmdroid.views.MapView
         android:id="@+id/map"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_above="@+id/routeLayout" />
+
+    <LinearLayout
+        android:id="@+id/routeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#37C5CEFF"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/infoRoad"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="10dp"
+            android:textColor="#000"
+            android:textSize="18sp"
+            android:layout_marginStart="10dp"/>
+
+        <Button
+            android:id="@+id/btnDirections"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:text="@string/show_route" />
+    </LinearLayout>
+
+
 
     <ImageButton
         android:id="@+id/btnLocation"
@@ -18,7 +53,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="15dp"
-        android:layout_marginBottom="15dp"
+        android:layout_marginBottom="100dp"
         android:background="#FFFFFF"
         android:contentDescription="@string/follow_location"
         android:cropToPadding="true"
@@ -26,6 +61,4 @@
         android:scaleType="fitCenter"
         android:src="@drawable/ic_baseline_my_location_24" />
 
-
 </RelativeLayout>
-

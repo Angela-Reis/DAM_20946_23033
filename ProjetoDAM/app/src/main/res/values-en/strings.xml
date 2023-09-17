@@ -67,4 +67,6 @@
     <string name="no_store_locations">No store locations found</string>
     <string name="error_store_locations">Error searching for store locations</string>
     <string name="network_error_store_locations">Network error while searching for store locations</string>
+    <string name="show_route">Show route</string>
+    <string name="stop_show_route">Stop showing route</string>
 </resources>
